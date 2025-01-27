@@ -28,11 +28,11 @@ DigitalOut blueIndicator(LED2);
 DigitalOut leftBeam(D8);
 DigitalOut rightBeam(D9);
 
-UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
-
 DigitalInOut sirenPin(PE_10);
 
 AnalogIn headlightMode(A0);
+
+UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
 
 //=====[Declaration and initialization of public global variables]=============
 
