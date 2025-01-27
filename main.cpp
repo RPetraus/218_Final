@@ -5,13 +5,7 @@
 
 //=====[Defines]===============================================================
 
-#define NUMBER_OF_KEYS                           4
-#define BLINKING_TIME_GAS_ALARM               1000
-#define BLINKING_TIME_OVER_TEMP_ALARM          500
-#define BLINKING_TIME_GAS_AND_OVER_TEMP_ALARM  100
-#define NUMBER_OF_AVG_SAMPLES                   100
-#define OVER_TEMP_LEVEL                         50
-#define TIME_INCREMENT_MS                       10
+#define NUMBER_OF_KEYS                           4 // this one not necessary
 # #define LIGHT_SENSOR_MACRO               000000000 
 
 //=====[Declaration and initialization of public global objects]===============
