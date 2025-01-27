@@ -12,6 +12,7 @@
 #define NUMBER_OF_AVG_SAMPLES                   100
 #define OVER_TEMP_LEVEL                         50
 #define TIME_INCREMENT_MS                       10
+# #define LIGHT_SENSOR_MACRO               000000000 
 
 //=====[Declaration and initialization of public global objects]===============
 
@@ -20,31 +21,16 @@ DigitalIn passengerPresent(D3);
 DigitalIn driverSeatbelt(D4);
 DigitalIn passengerSeatbelt(D5);
 DigitalIn ignitionButton(D6);
+DigitalIn lightSensor(D7) // may need to make this AnalogIn
 
 DigitalOut greenIndicator(LED1);
-DigitalInOut sirenPin(PE_10);
 DigitalOut blueIndicator(LED2);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
 
-DigitalIn enterButton(BUTTON1);
-DigitalIn alarmTestButton(D2);
-DigitalIn aButton(D4);
-DigitalIn bButton(D5);
-DigitalIn cButton(D6);
-DigitalIn dButton(D7);
-DigitalIn mq2(PE_12);
-
-DigitalOut alarmLed(LED1);
-DigitalOut incorrectCodeLed(LED3);
-DigitalOut systemBlockedLed(LED2);
-
 DigitalInOut sirenPin(PE_10);
 
-UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
-
 AnalogIn potentiometer(A0);
-AnalogIn lm35(A1);
 
 //=====[Declaration and initialization of public global variables]=============
 
