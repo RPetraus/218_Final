@@ -30,24 +30,8 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
-bool alarmState    = OFF;
-bool incorrectCode = false;
-bool overTempDetector = OFF;
-
-int numberOfIncorrectCodes = 0;
-int buttonBeingCompared    = 0;
-int codeSequence[NUMBER_OF_KEYS]   = { 1, 1, 0, 0 };
-int buttonsPressed[NUMBER_OF_KEYS] = { 0, 0, 0, 0 };
-int accumulatedTimeAlarm = 0;
-
-bool gasDetectorState          = OFF;
-bool overTempDetectorState     = OFF;
-
-float potentiometerReading = 0.0;
-float lm35ReadingsAverage  = 0.0;
-float lm35ReadingsSum      = 0.0;
-float lm35ReadingsArray[NUMBER_OF_AVG_SAMPLES];
-float lm35TempC            = 0.0;
+bool alarmState  = OFF;
+bool engineState = OFF;
 
 //=====[Declarations (prototypes) of public functions]=========================
 
