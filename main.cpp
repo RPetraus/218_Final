@@ -7,7 +7,7 @@
 
 #define DAYLIGHT_DELAY_MS                       2000                     
 #define DUSK_DELAY_MS                           1000
-#define READING_INCREMENT_MS                      10 // may not be necessary
+#define READING_INCREMENT_MS                      10
 # #define LIGHT_SENSOR_MACRO               000000000 
 
 //=====[Declaration and initialization of public global objects]===============
@@ -16,14 +16,14 @@ DigitalIn driverPresent(D2);
 DigitalIn passengerPresent(D3);
 DigitalIn driverSeatbelt(D4);
 DigitalIn passengerSeatbelt(D5);
-DigitalIn ignitionButton(D6);
+DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenIndicator(LED1);
 DigitalOut blueIndicator(LED2);
 DigitalOut leftBeam(D8);
 DigitalOut rightBeam(D9);
 
-DigitalInOut sirenPin(PE_10);
+DigitalOut sirenPin(PE_10);
 
 AnalogIn headlightMode(A0);
 AnalogIn lightSensor(D7)
@@ -71,20 +71,19 @@ int main()
 
 void inputsInit()
 {
-    alarmTestButton.mode(PullDown);
-    aButton.mode(PullDown);
-    bButton.mode(PullDown);
-    cButton.mode(PullDown);
-    dButton.mode(PullDown);
-    sirenPin.mode(OpenDrain);
-    sirenPin.input();
+    driverPresent.mode(PullDown);
+    passengerPresent.mode(PullDown);
+    driverSeatbelt.mode(PullDown);
+    passengerSeatbelt.mode(PullDown);
 }
 
 void outputsInit()
 {
-    alarmLed = OFF;
-    incorrectCodeLed = OFF;
-    systemBlockedLed = OFF;
+    greenIndicator = OFF;
+    blueIndicator = OFF;
+    sirenPin = OFF;
+    leftBeam = OFF;
+    rightBeam = OFF;
 }
 
 void alarmActivationUpdate()
