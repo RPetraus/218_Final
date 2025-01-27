@@ -1,10 +1,3 @@
-test
-/*
-testing
-*/
-
-Ryan added this
-
 //=====[Libraries]=============================================================
 
 #include "mbed.h"
@@ -21,6 +14,18 @@ Ryan added this
 #define TIME_INCREMENT_MS                       10
 
 //=====[Declaration and initialization of public global objects]===============
+
+DigitalIn driverPresent(D2);
+DigitalIn passengerPresent(D3);
+DigitalIn driverSeatbelt(D4);
+DigitalIn passengerSeatbelt(D5);
+DigitalIn ignitionButton(D6);
+
+DigitalOut greenIndicator(LED1);
+DigitalInOut sirenPin(PE_10);
+DigitalOut blueIndicator(LED2);
+
+UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
 
 DigitalIn enterButton(BUTTON1);
 DigitalIn alarmTestButton(D2);
