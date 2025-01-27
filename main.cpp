@@ -30,8 +30,7 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
-bool alarmState  = OFF;
-bool engineState = OFF;
+// add whenever necessary
 
 //=====[Declarations (prototypes) of public functions]=========================
 
