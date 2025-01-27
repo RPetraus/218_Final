@@ -5,7 +5,9 @@
 
 //=====[Defines]===============================================================
 
-#define NUMBER_OF_KEYS                           4 // this one not necessary
+#define DAYLIGHT_DELAY_MS                       2000                     
+#define DUSK_DELAY_MS                           1000
+#define READING_INCREMENT_MS                      10 // may not be necessary
 # #define LIGHT_SENSOR_MACRO               000000000 
 
 //=====[Declaration and initialization of public global objects]===============
@@ -15,7 +17,6 @@ DigitalIn passengerPresent(D3);
 DigitalIn driverSeatbelt(D4);
 DigitalIn passengerSeatbelt(D5);
 DigitalIn ignitionButton(D6);
-DigitalIn lightSensor(D7) // may need to make this AnalogIn
 
 DigitalOut greenIndicator(LED1);
 DigitalOut blueIndicator(LED2);
@@ -25,26 +26,32 @@ DigitalOut rightBeam(D9);
 DigitalInOut sirenPin(PE_10);
 
 AnalogIn headlightMode(A0);
+AnalogIn lightSensor(D7)
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
 
 //=====[Declaration and initialization of public global variables]=============
 
-// add whenever necessary
+bool isDaylight;
+bool isDusk;
+
+float lightLevel;
+float daylightLevel;
+float duskLevel;
 
 //=====[Declarations (prototypes) of public functions]=========================
 
 void inputsInit();
 void outputsInit();
 
-void alarmActivationUpdate();
-void alarmDeactivationUpdate();
+void ignitionSubsystem();
+void welcomeMessage();
+void engineStart();
+void errorMessage();
 
-void uartTask();
-void availableCommands();
-bool areEqual();
-float celsiusToFahrenheit( float tempInCelsiusDegrees );
-float analogReadingScaledWithTheLM35Formula( float analogReading );
+void headlightSubsystem();
+void beamMode();
+void lightLevel();
 
 //=====[Main function, the program entry point after power on or reset]========
 
