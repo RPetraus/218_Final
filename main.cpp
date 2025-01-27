@@ -25,12 +25,14 @@ DigitalIn lightSensor(D7) // may need to make this AnalogIn
 
 DigitalOut greenIndicator(LED1);
 DigitalOut blueIndicator(LED2);
+DigitalOut leftBeam(D8);
+DigitalOut rightBeam(D9);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200); 
 
 DigitalInOut sirenPin(PE_10);
 
-AnalogIn potentiometer(A0);
+AnalogIn headlightMode(A0);
 
 //=====[Declaration and initialization of public global variables]=============
 
