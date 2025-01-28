@@ -32,7 +32,7 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
-bool isDaylight;
+bool isDaylight; // currently lacking initializations of global variables
 bool isDusk;
 
 float lightLevel;
