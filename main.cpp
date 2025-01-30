@@ -10,6 +10,8 @@
 #define READING_INCREMENT_MS                      10
 # #define LIGHT_SENSOR_MACRO               000000000 
 
+//=====[Declaration of public data types]======================================
+
 //=====[Declaration and initialization of public global objects]===============
 
 DigitalIn driverPresent(D2);
@@ -58,13 +60,7 @@ void lightLevel();
 
 int main()
 {
-    inputsInit();
-    outputsInit();
     while (true) {
-        alarmActivationUpdate();
-        alarmDeactivationUpdate();
-        uartTask();
-        delay(TIME_INCREMENT_MS);
     }
 }
 
@@ -95,15 +91,43 @@ void welcomeMessage()
 void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
-        green
+        greenLED = ON;
+    }
+    else{
+        greenLED = OFF;
+    }
+}
+
+void errorMessage()
+{
+    uartUsb.write("Ignition Inhibited\r\n", 20);
+    
+
+    if(!driverPresent){
+        uartUsb.write("Driver seat not occupied.\r\n", 27);
+    } 
+    if(!driverSeatbelt){
+        uartUsb.write("Driver seatbelt not fastened.\r\n", 31);
+    }
+    if(!passengerPresent){
+        uartUsb.write("Passenger seat not occupied.\r\n", 30);
+    }
+    if(!passengerSeatbelt){
+        uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
     }
 }
 
 void ignitionSubsystem()
 {
     welcomeMessage();
+    ignitionEnable();
 
-    if (ignitionButton){
+    if (ignitionButton && greenLED){
+        uartUsb.write("Engine started.\r\n", 17);
+        greenLED = OFF;
+        blueLED = ON;
     }
-
+    else if (ignitionBuuton && !greenLED){
+        errorMessage();
+    }
 }
