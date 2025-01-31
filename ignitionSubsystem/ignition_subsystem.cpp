@@ -12,11 +12,6 @@
 
 //=====[Declaration of public data types]======================================
 
-typedef enum {
-    ENGINE_OFF,
-    ENGINE_ON
-} engineState_t;
-
 //=====[Declaration and initialization of public global objects]===============
 
 DigitalIn driverPresent(D5);
@@ -32,6 +27,9 @@ DigitalOut sirenPin(D6);
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
+
+bool driverWelcomed = false;
+bool errorReceived = false;
 
 
 //=====[Declarations (prototypes) of public functions]=========================
@@ -57,9 +55,16 @@ void outputsInitIgnition()
     sirenPin = BUZZER_OFF;
 }
 
+void engineInit()
+{
+    engineState = ENGINE_OFF;
+}
 void welcomeMessage()
 {
-    if (driverPresent){uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);}
+    if (driverPresent && !driverWelcomed){
+        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
+        driverWelcomed = true;
+    }
 }
 
 
@@ -91,14 +96,13 @@ void errorMessage()
     if(!passengerSeatbelt){
         uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
     }
+
 }
 
 void ignitionUpdate()
 {
     ignitionEnable();
     welcomeMessage();
-
-    static engineState_t engineState = ENGINE_OFF;
 
     switch( engineState ){
     
@@ -109,16 +113,19 @@ void ignitionUpdate()
             greenLED = OFF;
             blueLED = ON;
             engineState = ENGINE_ON;
+
         }
-        else if (ignitionButton && !greenLED){
+        else if (ignitionButton && !greenLED && !errorReceived){
             sirenPin = BUZZER_ON;
             errorMessage();
+            while(ignitionButton){errorReceived = true;} // want to change this
+            errorReceived = false;
         }
         break;
 
     case ENGINE_ON:
         if (ignitionButton){
-            while(ignitionButton){}
+            while(ignitionButton){} // want to change this
             engineState = ENGINE_OFF;
         }
         break;

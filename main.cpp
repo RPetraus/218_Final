@@ -24,7 +24,7 @@ DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenLED(LED1);
 DigitalOut blueLED(LED2);
-*/
+
 DigitalOut leftBeam(D8);
 DigitalOut rightBeam(D9);
 
@@ -52,13 +52,16 @@ void beamMode();
 //void lightLevel();
 
 //=====[Main function, the program entry point after power on or reset]========
-
+*/
 int main()
 {
     inputsInit();
     outputsInitIgnition();
+    engineInit();
+    outputsInitHeadlight();
     while (true) {
         ignitionUpdate();
+        headlightUpdate();
     }
 }
 

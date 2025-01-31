@@ -9,9 +9,8 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void inputsInit();
-void outputsInitIgnition();
-void ignitionUpdate();
+void outputsInitHeadlight();
+void headlightUpdate();
 
 //=====[#include guards - end]=================================================
 
