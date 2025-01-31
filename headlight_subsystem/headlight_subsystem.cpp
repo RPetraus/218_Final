@@ -107,17 +107,12 @@ void headlightUpdate()
     lightSensorInit();
     lightLevelUpdate();
     headlightModeUpdate();
+    ignitionUpdate();
 
     switch ( HLMode ){
         case HL_ON:
-            if ((engineState = ENGINE_ON)){
-                leftBeam = ON;
-                rightBeam = ON;
-            }
-            else{
-                leftBeam = OFF;
-                rightBeam = OFF;
-            }
+            leftBeam = ON;
+            rightBeam = ON;
         break;
 
         case HL_OFF:
@@ -126,26 +121,18 @@ void headlightUpdate()
         break;
 
         case HL_AUTO:
-            if ((engineState = ENGINE_OFF)){
-                if (LDRReadingAvg < duskLevel){
-                    delay(DUSK_DELAY_MS);
-                    leftBeam = ON;
-                    rightBeam = ON;
-                }
-                else if (LDRReadingAvg > duskLevel && LDRReadingAvg < daylightLevel){
-                    leftBeam = leftBeam;
-                    rightBeam = rightBeam;
-                }
-                else if ( LDRReadingAvg > daylightLevel){
+            if (LDRReadingAvg < duskLevel){
+                delay(DUSK_DELAY_MS);
+                leftBeam = ON;
+                rightBeam = ON;
+            } else if (LDRReadingAvg > duskLevel && LDRReadingAvg < daylightLevel){
+                leftBeam = leftBeam;
+                rightBeam = rightBeam;
+            } else if ( LDRReadingAvg > daylightLevel){
                     delay(DAYLIGHT_DELAY_MS);
                     leftBeam = OFF;
                     rightBeam = OFF;
                 }
-            }
-            else{
-                leftBeam = OFF;
-                rightBeam = OFF;
-            }
         break;
     }
 }

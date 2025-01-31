@@ -4,6 +4,7 @@
 #include "arm_book_lib.h"
 
 #include "ignition_subsystem.h"
+#include "headlight_subsystem.h"
 
 //=====[Defines]===============================================================
 
@@ -11,6 +12,14 @@
 #define BUZZER_OFF 1
 
 //=====[Declaration of public data types]======================================
+
+typedef enum{
+    BUTTON_UP,
+    BUTTON_FALLING,
+    BUTTON_DOWN,
+    BUTTON_RISING
+} debouncedIgnitionReleasedStateMachine_t;
+
 
 //=====[Declaration and initialization of public global objects]===============
 
@@ -30,6 +39,8 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 bool driverWelcomed = false;
 bool errorReceived = false;
+
+engineState_t engineState;
 
 
 //=====[Declarations (prototypes) of public functions]=========================
@@ -101,17 +112,15 @@ void errorMessage()
 
 void ignitionUpdate()
 {
+    
     ignitionEnable();
     welcomeMessage();
 
     switch( engineState ){
     
     case ENGINE_OFF:
+        blueLED = OFF;
         if (ignitionButton && greenLED){
-            uartUsb.write("Engine started.\r\n", 17);
-            sirenPin = BUZZER_OFF;
-            greenLED = OFF;
-            blueLED = ON;
             engineState = ENGINE_ON;
 
         }
@@ -120,13 +129,19 @@ void ignitionUpdate()
             errorMessage();
             while(ignitionButton){errorReceived = true;} // want to change this
             errorReceived = false;
+            engineState = ENGINE_OFF;
         }
         break;
 
     case ENGINE_ON:
+        uartUsb.write("Engine started.\r\n", 17);
+        sirenPin = BUZZER_OFF;
+        greenLED = OFF;
+        blueLED = ON;
         if (ignitionButton){
             while(ignitionButton){} // want to change this
             engineState = ENGINE_OFF;
+            uartUsb.write("Engine off.\r\n", 13);
         }
         break;
     }
