@@ -2,6 +2,7 @@
 
 #include "mbed.h"
 #include "arm_book_lib.h"
+#include "string.h"
 
 
 //=====[Defines]===============================================================
@@ -10,8 +11,8 @@
 #define BUZZER_OFF 1
 #define TIME_INCREMENT_MS 10
 #define TIME_DEBOUNCE_MS 30
-#define DELAY_LIGHTS_OFF_MS 2000
-#define DELAY_LIGHTS_ON_MS 1000
+#define DAYLIGHT_DELAY_MS 2000
+#define DUSK_DELAY_MS 1000
 
 #define DAYLIGHT_DELAY_MS 2000                     
 #define DUSK_DELAY_MS 1000
@@ -72,8 +73,8 @@ float autoMode = 0.66;
 
 float headlightModeSelector;
 
-float daylightLevel = 0.6;
-float duskLevel = 0.3;
+float daylightLevel = 0.8;
+float duskLevel = 0.5;
 float LDR_readings[LDR_NUMBER_OF_AVG_SAMPLES];
 float LDRReadingAvg = 0.0;
 
@@ -323,29 +324,29 @@ void headlightUpdate()
             break;
 
             case HL_AUTO:
-                
-                if (lightSensor.read() <= duskLevel){
+                if (lightSensorRead() <= duskLevel){
                     accumulatedHeadlightDelayTime_ON = accumulatedHeadlightDelayTime_ON + TIME_INCREMENT_MS;
-                    if (accumulatedHeadlightDelayTime_OFF >= DELAY_LIGHTS_ON_MS){
+                    if (accumulatedHeadlightDelayTime_ON >= DUSK_DELAY_MS){
                         accumulatedHeadlightDelayTime_OFF = 0;
                         accumulatedHeadlightDelayTime_ON = 0;
                         leftBeam = ON;
                         rightBeam = ON;
                     }
 
-                } else if (lightSensor.read() > duskLevel && lightSensor.read() <= daylightLevel){
+                } else if (lightSensorRead() > duskLevel && lightSensorRead() <= daylightLevel){
                     accumulatedHeadlightDelayTime_ON = 0;
                     accumulatedHeadlightDelayTime_OFF = 0;
 
-                } else if ( lightSensor.read() > daylightLevel){
+                } else if ( lightSensorRead() > daylightLevel){
                     accumulatedHeadlightDelayTime_OFF = accumulatedHeadlightDelayTime_OFF + TIME_INCREMENT_MS;
-                    if (accumulatedHeadlightDelayTime_OFF >= DELAY_LIGHTS_OFF_MS){
+                    if (accumulatedHeadlightDelayTime_OFF >= DAYLIGHT_DELAY_MS){
                         accumulatedHeadlightDelayTime_OFF = 0;
                         accumulatedHeadlightDelayTime_ON = 0;
                         leftBeam = OFF;
                         rightBeam = OFF;
                     }
                 }
+                break;
         }
     } else{
         leftBeam = OFF;
