@@ -1,7 +1,7 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _IGNITION_SUBSYSTEM_H_
-#define _IGNITION_SUBSYSTEM_H_
+#ifndef _HEADLIGHT_SUBSYTEM_H_
+#define _HEADLIGHT_SUBSYTEM_H_
 
 //=====[Declaration of public defines]=========================================
 
@@ -9,10 +9,9 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void inputsInit();
-void outputsInitIgnition();
-void ignitionSubsystem();
+void outputsInitHeadlight();
+void headlightUpdate();
 
 //=====[#include guards - end]=================================================
 
-#endif // _IGNITION_SUBSYSTEM_H_
+#endif // _HEADLIGHT_SUBSYTEM_H_

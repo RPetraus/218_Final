@@ -1,9 +1,10 @@
 //=====[Libraries]=============================================================
-
+/*
 #include "mbed.h"
 #include "arm_book_lib.h"
 
-#include "ignitionSubsystem.h"
+#include "ignition_subsystem.h"
+#include "headlight_subsystem.h"
 
 //=====[Defines]===============================================================
 
@@ -12,10 +13,13 @@
 
 //=====[Declaration of public data types]======================================
 
-typedef enum {
-    ENGINE_OFF,
-    ENGINE_ON
-} engineState_t;
+typedef enum{
+    BUTTON_UP,
+    BUTTON_FALLING,
+    BUTTON_DOWN,
+    BUTTON_RISING
+} debouncedIgnitionReleasedStateMachine_t;
+
 
 //=====[Declaration and initialization of public global objects]===============
 
@@ -33,12 +37,14 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
+bool driverWelcomed = false;
+bool errorReceived = false;
+
 engineState_t engineState;
+
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-
-void engineInit();
 void welcomeMessage();
 void errorMessage();
 void ignitionEnable();
@@ -60,19 +66,23 @@ void outputsInitIgnition()
     sirenPin = BUZZER_OFF;
 }
 
-void welcomeMessage()
-{
-    if (driverPresent){uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);}
-}
-
 void engineInit()
 {
     engineState = ENGINE_OFF;
 }
+void welcomeMessage()
+{
+    if (driverPresent && !driverWelcomed){
+        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
+        driverWelcomed = true;
+    }
+}
+
 
 void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
+
         greenLED = ON;
     }
     else{
@@ -97,33 +107,43 @@ void errorMessage()
     if(!passengerSeatbelt){
         uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
     }
+
 }
 
-void ignitionSubsystem()
+void ignitionUpdate()
 {
-    welcomeMessage();
+    
     ignitionEnable();
+    welcomeMessage();
 
     switch( engineState ){
     
     case ENGINE_OFF:
+        blueLED = OFF;
         if (ignitionButton && greenLED){
-            uartUsb.write("Engine started.\r\n", 17);
-            sirenPin = BUZZER_OFF;
-            greenLED = OFF;
-            blueLED = ON;
             engineState = ENGINE_ON;
+
         }
-        else if (ignitionButton && !greenLED){
+        else if (ignitionButton && !greenLED && !errorReceived){
             sirenPin = BUZZER_ON;
             errorMessage();
+            while(ignitionButton){errorReceived = true;} // want to change this
+            errorReceived = false;
+            engineState = ENGINE_OFF;
         }
         break;
 
     case ENGINE_ON:
+        uartUsb.write("Engine started.\r\n", 17);
+        sirenPin = BUZZER_OFF;
+        greenLED = OFF;
+        blueLED = ON;
         if (ignitionButton){
-            while(ignitionButton){}
+            while(ignitionButton){} // want to change this
             engineState = ENGINE_OFF;
+            uartUsb.write("Engine off.\r\n", 13);
         }
+        break;
     }
 }
+*/
