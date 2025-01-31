@@ -66,7 +66,7 @@ void welcomeMessage()
 void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
-        
+
         greenLED = ON;
     }
     else{
@@ -95,6 +95,7 @@ void errorMessage()
 
 void ignitionUpdate()
 {
+    ignitionEnable();
     welcomeMessage();
 
     static engineState_t engineState = ENGINE_OFF;

@@ -4,6 +4,8 @@
 #include "arm_book_lib.h"
 
 #include "ignition_subsystem.h"
+#include "headlight_subsystem.h"
+
 
 //=====[Defines]===============================================================
 
@@ -25,8 +27,6 @@ DigitalOut blueLED(LED2);
 */
 DigitalOut leftBeam(D8);
 DigitalOut rightBeam(D9);
-
-DigitalOut sirenPin(PE_10);
 
 AnalogIn headlightMode(A1);
 //AnalogIn lightSensor(A0);
