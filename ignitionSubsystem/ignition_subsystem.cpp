@@ -66,6 +66,7 @@ void welcomeMessage()
 void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
+        
         greenLED = ON;
     }
     else{
