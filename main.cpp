@@ -3,14 +3,11 @@
 #include "mbed.h"
 #include "arm_book_lib.h"
 
-#include "ignitionSubsystem.h"
+#include "ignition_subsystem.h"
 
 //=====[Defines]===============================================================
 
-#define DAYLIGHT_DELAY_MS                       2000                     
-#define DUSK_DELAY_MS                           1000
-#define READING_INCREMENT_MS                      10
-//#define LIGHT_SENSOR_MACRO               000000000 
+
 
 //=====[Declaration of public data types]======================================
 
@@ -32,7 +29,7 @@ DigitalOut rightBeam(D9);
 DigitalOut sirenPin(PE_10);
 
 AnalogIn headlightMode(A1);
-AnalogIn lightSensor(A0);
+//AnalogIn lightSensor(A0);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
@@ -50,12 +47,6 @@ float duskLevel;
 void inputsInit();
 void outputsInit();
 
-void ignitionSubsystem();
-void welcomeMessage();
-void engineStart();
-void errorMessage();
-void ignitionEnable();
-
 void headlightSubsystem();
 void beamMode();
 //void lightLevel();
@@ -64,8 +55,10 @@ void beamMode();
 
 int main()
 {
-    
+    inputsInit();
+    outputsInitIgnition();
     while (true) {
+        ignitionUpdate();
     }
 }
 

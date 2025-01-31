@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "arm_book_lib.h"
 
-#include "ignitionSubsystem.h"
+#include "ignition_subsystem.h"
 
 //=====[Defines]===============================================================
 
@@ -33,12 +33,9 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
-engineState_t engineState;
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-
-void engineInit();
 void welcomeMessage();
 void errorMessage();
 void ignitionEnable();
@@ -65,10 +62,6 @@ void welcomeMessage()
     if (driverPresent){uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);}
 }
 
-void engineInit()
-{
-    engineState = ENGINE_OFF;
-}
 
 void ignitionEnable()
 {
@@ -99,10 +92,11 @@ void errorMessage()
     }
 }
 
-void ignitionSubsystem()
+void ignitionUpdate()
 {
     welcomeMessage();
-    ignitionEnable();
+
+    static engineState_t engineState = ENGINE_OFF;
 
     switch( engineState ){
     
@@ -125,5 +119,6 @@ void ignitionSubsystem()
             while(ignitionButton){}
             engineState = ENGINE_OFF;
         }
+        break;
     }
 }

@@ -11,7 +11,7 @@
 
 void inputsInit();
 void outputsInitIgnition();
-void ignitionSubsystem();
+void ignitionUpdate();
 
 //=====[#include guards - end]=================================================
 
