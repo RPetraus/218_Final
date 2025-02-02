@@ -1,6 +1,6 @@
 # Automatic Headlight Control System  
 
-# Ryan Petrauskas and Leo Weisberger  
+Ryan Petrauskas and Leo Weisberger  
 
 The Automatic Headlight Control System in Project 2 enhances driving safety by automating headlight activation based on external conditions. It integrates a driver seat occupancy sensor, an ignition push button, a blue indicator LED on the NUCLEO board, a potentiometer for headlight mode selection, a light sensor, and two LEDs representing the low beam lamps. The ignition system ensures the engine can only start when the driver and passenger are seated and buckled. Once started, the engine remains on even if the driver exits. Pressing the ignition button again while the engine is running turns it off. Headlights operate in three modes controlled by the potentiometer: OFF when below 0.33, ON when above 0.66, and AUTO between 0.33 and 0.66. In AUTO mode, headlights turn on after one second in darkness and off after two seconds in brightness, maintaining their state otherwise.  
 
