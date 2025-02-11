@@ -11,13 +11,8 @@
 #define BUZZER_OFF 1
 #define TIME_INCREMENT_MS 10
 #define TIME_DEBOUNCE_MS 30
-#define DAYLIGHT_DELAY_MS 2000
-#define DUSK_DELAY_MS 1000
 
-#define DAYLIGHT_DELAY_MS 2000                     
-#define DUSK_DELAY_MS 1000
 #define READING_INCREMENT_MS 10
-#define LDR_NUMBER_OF_AVG_SAMPLES 10
 
 //=====[Declaration of public data types]======================================
 
@@ -28,55 +23,28 @@ typedef enum{
     BUTTON_RISING
 } debouncedIgnitionReleasedStateMachine_t;
 
-typedef enum{
-    HL_ON,
-    HL_AUTO,
-    HL_OFF
-} HLMode_t;
-
-
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalIn driverPresent(D5);
-DigitalIn passengerPresent(D4);
-DigitalIn driverSeatbelt(D3);
-DigitalIn passengerSeatbelt(D2);
+DigitalIn driverPresent(D10);
+DigitalIn passengerPresent(D11);
+DigitalIn driverSeatbelt(D12);
+DigitalIn passengerSeatbelt(D13);
 DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenLED(LED1);
 DigitalOut blueLED(LED2);
-DigitalOut sirenPin(D6);
-
-DigitalOut leftBeam(D8);
-DigitalOut rightBeam(D9);
-
-AnalogIn headlightMode(A1);
-AnalogIn lightSensor(A0);
+DigitalOut sirenPin(D15);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
 int accumulatedButtonTime = 0;
-int accumulatedHeadlightDelayTime_ON = 0;
-int accumulatedHeadlightDelayTime_OFF = 0;
 
 bool engineStarted = false;
 bool driverWelcomed = false;
 
 debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
-
-HLMode_t HLMode;
-
-float onMode = 0.33;
-float autoMode = 0.66;
-
-float headlightModeSelector;
-
-float daylightLevel = 0.8;
-float duskLevel = 0.5;
-float LDR_readings[LDR_NUMBER_OF_AVG_SAMPLES];
-float LDRReadingAvg = 0.0;
 
 //=====[Declarations (prototypes) of public functions]=========================
 
@@ -92,22 +60,12 @@ bool debounceIgnition();
 void ignitionEnable();
 bool ignitionUpdate();
 
-void outputsInitHeadlight();
-void headlightModeUpdate();
-void lightSensorInit();
-void lightLevelUpdate();
-float lightSensorRead();
-void headlightUpdate();
-
 int main()
 {
     inputsInit();
     outputsInitIgnition();
-    outputsInitHeadlight();
-    lightSensorInit();
     while (true) {
         ignitionUpdate();
-        headlightUpdate();
         delay(TIME_INCREMENT_MS);
     }
 }
@@ -130,12 +88,6 @@ void outputsInitIgnition()
     sirenPin = BUZZER_OFF;
 }
 
-void outputsInitHeadlight()
-{
-    leftBeam = OFF;
-    rightBeam = OFF;
-}
-
 void debounceIgnitionInit()
 {
     if( ignitionButton ) {
@@ -144,7 +96,6 @@ void debounceIgnitionInit()
         ignitionButtonState = BUTTON_DOWN;
     }
 }
-
 
 bool debounceIgnition()
 {
@@ -257,101 +208,3 @@ bool ignitionUpdate()
     
     return engineStarted;
 }
-
-void headlightModeUpdate()
-{
-    headlightModeSelector = headlightMode.read();
-
-    if (headlightModeSelector <= onMode){
-        HLMode = HL_ON;
-    }
-    else if (headlightModeSelector > onMode && headlightModeSelector <= autoMode){
-        HLMode = HL_AUTO;
-    }
-    else if (headlightModeSelector > autoMode){
-        HLMode = HL_OFF;
-    }
-}
-
-void lightSensorInit(){
-    int x;
-
-    for( x=0; x<LDR_NUMBER_OF_AVG_SAMPLES; x++){
-        LDR_readings[x] = 0;
-    }
-}
-
-void lightLevelUpdate()
-{
-    static int LDRSampleIndex = 0;
-    float LDRReadingsSum;
-    int x;
-
-    LDR_readings[LDRSampleIndex] = lightSensor.read();
-       LDRSampleIndex++;
-    if ( LDRSampleIndex >= LDR_NUMBER_OF_AVG_SAMPLES) {
-        LDRSampleIndex = 0;
-    }
-    
-   LDRReadingsSum = 0.0;
-    for (x = 0; x < LDR_NUMBER_OF_AVG_SAMPLES; x++) {
-        LDRReadingsSum = LDRReadingsSum + LDR_readings[x];
-    }
-    LDRReadingAvg = LDRReadingsSum / LDR_NUMBER_OF_AVG_SAMPLES;
-}
-
-float lightSensorRead(){
-    lightLevelUpdate();
-    return LDRReadingAvg;
-}
-
-void headlightUpdate()
-{
-    headlightModeUpdate();
-
-    if (engineStarted){
-        switch (HLMode){
-            case HL_ON:
-                leftBeam = ON;
-                rightBeam = ON;
-
-            break;
-
-            case HL_OFF:
-                leftBeam = OFF;
-                rightBeam = OFF;
-
-            break;
-
-            case HL_AUTO:
-                if (lightSensorRead() <= duskLevel){
-                    accumulatedHeadlightDelayTime_ON = accumulatedHeadlightDelayTime_ON + TIME_INCREMENT_MS;
-                    if (accumulatedHeadlightDelayTime_ON >= DUSK_DELAY_MS){
-                        accumulatedHeadlightDelayTime_OFF = 0;
-                        accumulatedHeadlightDelayTime_ON = 0;
-                        leftBeam = ON;
-                        rightBeam = ON;
-                    }
-
-                } else if (lightSensorRead() > duskLevel && lightSensorRead() <= daylightLevel){
-                    accumulatedHeadlightDelayTime_ON = 0;
-                    accumulatedHeadlightDelayTime_OFF = 0;
-
-                } else if ( lightSensorRead() > daylightLevel){
-                    accumulatedHeadlightDelayTime_OFF = accumulatedHeadlightDelayTime_OFF + TIME_INCREMENT_MS;
-                    if (accumulatedHeadlightDelayTime_OFF >= DAYLIGHT_DELAY_MS){
-                        accumulatedHeadlightDelayTime_OFF = 0;
-                        accumulatedHeadlightDelayTime_ON = 0;
-                        leftBeam = OFF;
-                        rightBeam = OFF;
-                    }
-                }
-                break;
-        }
-    } else{
-        leftBeam = OFF;
-        rightBeam = OFF;
-    }
-}
-
-
