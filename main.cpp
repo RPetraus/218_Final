@@ -1,30 +1,30 @@
 //=====[Libraries]=============================================================
 
-#include "mbed.h"
-#include "arm_book_lib.h"
-#include "string.h"
-
+#include "smart_car_system.h"
 
 //=====[Defines]===============================================================
 
+/*
 #define BUZZER_ON 0
 #define BUZZER_OFF 1
 #define TIME_INCREMENT_MS 10
 #define TIME_DEBOUNCE_MS 30
-
-#define READING_INCREMENT_MS 10
+*/
 
 //=====[Declaration of public data types]======================================
 
+/*
 typedef enum{
     BUTTON_UP,
     BUTTON_FALLING,
     BUTTON_DOWN,
     BUTTON_RISING
 } debouncedIgnitionReleasedStateMachine_t;
+*/
 
 //=====[Declaration and initialization of public global objects]===============
 
+/*
 DigitalIn driverPresent(D10);
 DigitalIn passengerPresent(D11);
 DigitalIn driverSeatbelt(D12);
@@ -33,21 +33,25 @@ DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenLED(LED1);
 DigitalOut blueLED(LED2);
-DigitalOut sirenPin(D15);
+DigitalOut sirenPin(PE_10);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
+*/
 
 //=====[Declaration and initialization of public global variables]=============
 
+/*
 int accumulatedButtonTime = 0;
 
 bool engineStarted = false;
 bool driverWelcomed = false;
 
 debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
+*/
 
 //=====[Declarations (prototypes) of public functions]=========================
 
+/*
 void inputsInit();
 void outputsInitIgnition();
 
@@ -59,20 +63,20 @@ bool debounceIgnition();
 
 void ignitionEnable();
 bool ignitionUpdate();
+*/
 
 int main()
 {
-    inputsInit();
-    outputsInitIgnition();
+    smartCarSystemInit();
     while (true) {
-        ignitionUpdate();
-        delay(TIME_INCREMENT_MS);
+        smartCarSystemUpdate();
     }
 }
 
 
 //=====[Implementations of public functions]===================================
 
+/*
 void inputsInit()
 {
     driverPresent.mode(PullDown);
@@ -208,3 +212,4 @@ bool ignitionUpdate()
     
     return engineStarted;
 }
+*/

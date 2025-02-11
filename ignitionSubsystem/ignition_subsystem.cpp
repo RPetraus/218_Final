@@ -1,15 +1,15 @@
 //=====[Libraries]=============================================================
-/*
+
 #include "mbed.h"
 #include "arm_book_lib.h"
 
 #include "ignition_subsystem.h"
-#include "headlight_subsystem.h"
 
 //=====[Defines]===============================================================
 
 #define BUZZER_ON 0
 #define BUZZER_OFF 1
+#define TIME_DEBOUNCE_MS 30
 
 //=====[Declaration of public data types]======================================
 
@@ -20,69 +20,91 @@ typedef enum{
     BUTTON_RISING
 } debouncedIgnitionReleasedStateMachine_t;
 
-
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalIn driverPresent(D5);
-DigitalIn passengerPresent(D4);
-DigitalIn driverSeatbelt(D3);
-DigitalIn passengerSeatbelt(D2);
+DigitalIn driverPresent(D10);
+DigitalIn passengerPresent(D11);
+DigitalIn driverSeatbelt(D12);
+DigitalIn passengerSeatbelt(D13);
 DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenLED(LED1);
 DigitalOut blueLED(LED2);
-DigitalOut sirenPin(D6);
+DigitalOut sirenPin(PE_10);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
+int accumulatedButtonTime = 0;
+
+bool engineStarted = false;
 bool driverWelcomed = false;
-bool errorReceived = false;
 
-engineState_t engineState;
+debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
 
+//=====[Declarations (prototypes) of private functions]=========================
 
-//=====[Declarations (prototypes) of public functions]=========================
-
-void welcomeMessage();
-void errorMessage();
-void ignitionEnable();
+static void inputsInit();
+static void outputsInitIgnition();
+static void debounceIgnitionInit();
 
 //=====[Implementations of public functions]===================================
 
-void inputsInit()
+void ignitionSubsystemInit()
 {
-    driverPresent.mode(PullDown);
-    passengerPresent.mode(PullDown);
-    driverSeatbelt.mode(PullDown);
-    passengerSeatbelt.mode(PullDown);
+    inputsInit();
+    outputsInitIgnition();
+    debounceIgnitionInit();
 }
 
-void outputsInitIgnition()
+bool debounceIgnition()
 {
-    greenLED = OFF;
-    blueLED = OFF;
-    sirenPin = BUZZER_OFF;
-}
+    bool ignitionReleased = false;
 
-void engineInit()
-{
-    engineState = ENGINE_OFF;
-}
-void welcomeMessage()
-{
-    if (driverPresent && !driverWelcomed){
-        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
-        driverWelcomed = true;
+    switch( ignitionButtonState ) {
+        case BUTTON_UP:
+            if( ignitionButton ) {
+                ignitionButtonState = BUTTON_FALLING;
+                accumulatedButtonTime = 0;
+            }
+            break;
+
+        case BUTTON_FALLING:
+            if( accumulatedButtonTime >= TIME_DEBOUNCE_MS ) {
+                if( ignitionButton ) {
+                    ignitionButtonState = BUTTON_DOWN;
+                } else {
+                ignitionButtonState = BUTTON_UP;
+                }
+            }
+            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
+            break;
+        
+        case BUTTON_DOWN:
+            if (!ignitionButton){
+                ignitionButtonState = BUTTON_RISING;
+                accumulatedButtonTime = 0;
+            }
+            break;
+
+        case BUTTON_RISING:
+            if (!ignitionButton){
+                ignitionButtonState = BUTTON_UP;
+                ignitionReleased = true;
+            }
+            else{
+                ignitionButtonState = BUTTON_DOWN;
+            }
+            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
+            break;
     }
+    return ignitionReleased;
 }
-
 
 void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
-
         greenLED = ON;
     }
     else{
@@ -90,11 +112,22 @@ void ignitionEnable()
     }
 }
 
+void welcomeMessage()
+{
+    if (driverPresent && !driverWelcomed){
+        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
+        driverWelcomed = true;
+    }
+    else if (!driverPresent){
+        driverWelcomed = false;
+    }
+}
+
 void errorMessage()
 {
+
     uartUsb.write("Ignition Inhibited\r\n", 20);
     
-
     if(!driverPresent){
         uartUsb.write("Driver seat not occupied.\r\n", 27);
     } 
@@ -107,43 +140,58 @@ void errorMessage()
     if(!passengerSeatbelt){
         uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
     }
-
 }
 
-void ignitionUpdate()
+bool ignitionUpdate()
 {
-    
-    ignitionEnable();
     welcomeMessage();
-
-    switch( engineState ){
-    
-    case ENGINE_OFF:
-        blueLED = OFF;
-        if (ignitionButton && greenLED){
-            engineState = ENGINE_ON;
-
-        }
-        else if (ignitionButton && !greenLED && !errorReceived){
+    ignitionEnable();
+    if (!engineStarted && debounceIgnition()){
+        uartUsb.write("Ignition attempted.\r\n", 21);
+        if (!greenLED){
             sirenPin = BUZZER_ON;
             errorMessage();
-            while(ignitionButton){errorReceived = true;} // want to change this
-            errorReceived = false;
-            engineState = ENGINE_OFF;
+            engineStarted = false;
         }
-        break;
+        else{
+            sirenPin = BUZZER_OFF;
+            greenLED = OFF;
+            blueLED = ON;
+            uartUsb.write("Engine started.\r\n", 17);
+            engineStarted = true;
+        }
+    }
+    else if (engineStarted && debounceIgnition()){
+        uartUsb.write("Engine off.\r\n", 13);
+        engineStarted = false;
+        blueLED = OFF;
+    }
+    
+    return engineStarted;
+}
 
-    case ENGINE_ON:
-        uartUsb.write("Engine started.\r\n", 17);
-        sirenPin = BUZZER_OFF;
-        greenLED = OFF;
-        blueLED = ON;
-        if (ignitionButton){
-            while(ignitionButton){} // want to change this
-            engineState = ENGINE_OFF;
-            uartUsb.write("Engine off.\r\n", 13);
-        }
-        break;
+//=====[Implementations of private functions]===================================
+
+static void inputsInit()
+{
+    driverPresent.mode(PullDown);
+    passengerPresent.mode(PullDown);
+    driverSeatbelt.mode(PullDown);
+    passengerSeatbelt.mode(PullDown);
+}
+
+static void outputsInitIgnition()
+{
+    greenLED = OFF;
+    blueLED = OFF;
+    sirenPin = BUZZER_OFF;
+}
+
+static void debounceIgnitionInit()
+{
+    if( ignitionButton ) {
+        ignitionButtonState = BUTTON_UP;
+    } else {
+        ignitionButtonState = BUTTON_DOWN;
     }
 }
-*/
