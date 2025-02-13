@@ -3,6 +3,8 @@
 #ifndef _SMART_CAR_SYSTEM_H_
 #define _SMART_CAR_SYSTEM_H_
 
+#define TIME_INCREMENT_MS 10
+
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================

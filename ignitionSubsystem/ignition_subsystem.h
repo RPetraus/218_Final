@@ -5,8 +5,6 @@
 
 //=====[Declaration of public defines]=========================================
 
-#define TIME_INCREMENT_MS 10
-
 //=====[Declaration of public data types]======================================
 
 //=====[Declaration and initialization of public global variables]=============
@@ -14,15 +12,8 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void welcomeMessage();
-void errorMessage();
-
-bool debounceIgnition();
-
-void ignitionEnable();
-bool ignitionUpdate();
-
 void ignitionSubsystemInit();
+bool ignitionSubsystemUpdate();
 
 //=====[#include guards - end]=================================================
 

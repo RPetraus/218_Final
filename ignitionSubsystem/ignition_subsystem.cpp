@@ -4,6 +4,7 @@
 #include "arm_book_lib.h"
 
 #include "ignition_subsystem.h"
+#include "smart_car_system.h"
 
 //=====[Defines]===============================================================
 
@@ -49,6 +50,11 @@ static void inputsInit();
 static void outputsInitIgnition();
 static void debounceIgnitionInit();
 
+static void welcomeMessage();
+static void ignitionEnable();
+static bool debounceIgnition();
+static void errorMessage();
+
 //=====[Implementations of public functions]===================================
 
 void ignitionSubsystemInit()
@@ -58,91 +64,7 @@ void ignitionSubsystemInit()
     debounceIgnitionInit();
 }
 
-bool debounceIgnition()
-{
-    bool ignitionReleased = false;
-
-    switch( ignitionButtonState ) {
-        case BUTTON_UP:
-            if( ignitionButton ) {
-                ignitionButtonState = BUTTON_FALLING;
-                accumulatedButtonTime = 0;
-            }
-            break;
-
-        case BUTTON_FALLING:
-            if( accumulatedButtonTime >= TIME_DEBOUNCE_MS ) {
-                if( ignitionButton ) {
-                    ignitionButtonState = BUTTON_DOWN;
-                } else {
-                ignitionButtonState = BUTTON_UP;
-                }
-            }
-            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
-            break;
-        
-        case BUTTON_DOWN:
-            if (!ignitionButton){
-                ignitionButtonState = BUTTON_RISING;
-                accumulatedButtonTime = 0;
-            }
-            break;
-
-        case BUTTON_RISING:
-            if (!ignitionButton){
-                ignitionButtonState = BUTTON_UP;
-                ignitionReleased = true;
-            }
-            else{
-                ignitionButtonState = BUTTON_DOWN;
-            }
-            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
-            break;
-    }
-    return ignitionReleased;
-}
-
-void ignitionEnable()
-{
-    if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
-        greenLED = ON;
-    }
-    else{
-        greenLED = OFF;
-    }
-}
-
-void welcomeMessage()
-{
-    if (driverPresent && !driverWelcomed){
-        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
-        driverWelcomed = true;
-    }
-    else if (!driverPresent){
-        driverWelcomed = false;
-    }
-}
-
-void errorMessage()
-{
-
-    uartUsb.write("Ignition Inhibited\r\n", 20);
-    
-    if(!driverPresent){
-        uartUsb.write("Driver seat not occupied.\r\n", 27);
-    } 
-    if(!driverSeatbelt){
-        uartUsb.write("Driver seatbelt not fastened.\r\n", 31);
-    }
-    if(!passengerPresent){
-        uartUsb.write("Passenger seat not occupied.\r\n", 30);
-    }
-    if(!passengerSeatbelt){
-        uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
-    }
-}
-
-bool ignitionUpdate()
+bool ignitionSubsystemUpdate()
 {
     welcomeMessage();
     ignitionEnable();
@@ -193,5 +115,89 @@ static void debounceIgnitionInit()
         ignitionButtonState = BUTTON_UP;
     } else {
         ignitionButtonState = BUTTON_DOWN;
+    }
+}
+
+static void welcomeMessage()
+{
+    if (driverPresent && !driverWelcomed){
+        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
+        driverWelcomed = true;
+    }
+    else if (!driverPresent){
+        driverWelcomed = false;
+    }
+}
+
+static void ignitionEnable()
+{
+    if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
+        greenLED = ON;
+    }
+    else{
+        greenLED = OFF;
+    }
+}
+
+static bool debounceIgnition()
+{
+    bool ignitionReleased = false;
+
+    switch( ignitionButtonState ) {
+        case BUTTON_UP:
+            if( ignitionButton ) {
+                ignitionButtonState = BUTTON_FALLING;
+                accumulatedButtonTime = 0;
+            }
+            break;
+
+        case BUTTON_FALLING:
+            if( accumulatedButtonTime >= TIME_DEBOUNCE_MS ) {
+                if( ignitionButton ) {
+                    ignitionButtonState = BUTTON_DOWN;
+                } else {
+                ignitionButtonState = BUTTON_UP;
+                }
+            }
+            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
+            break;
+        
+        case BUTTON_DOWN:
+            if (!ignitionButton){
+                ignitionButtonState = BUTTON_RISING;
+                accumulatedButtonTime = 0;
+            }
+            break;
+
+        case BUTTON_RISING:
+            if (!ignitionButton){
+                ignitionButtonState = BUTTON_UP;
+                ignitionReleased = true;
+            }
+            else{
+                ignitionButtonState = BUTTON_DOWN;
+            }
+            accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
+            break;
+    }
+    return ignitionReleased;
+}
+
+static void errorMessage()
+{
+
+    uartUsb.write("Ignition Inhibited\r\n", 20);
+    
+    if(!driverPresent){
+        uartUsb.write("Driver seat not occupied.\r\n", 27);
+    } 
+    if(!driverSeatbelt){
+        uartUsb.write("Driver seatbelt not fastened.\r\n", 31);
+    }
+    if(!passengerPresent){
+        uartUsb.write("Passenger seat not occupied.\r\n", 30);
+    }
+    if(!passengerSeatbelt){
+        uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
     }
 }
