@@ -93,7 +93,7 @@ bool ignitionSubsystemUpdate()
 }
 
 bool engineRunning() {
-    return (engineStarted && !debounceIgnition(););
+    return (engineStarted && !debounceIgnition());
 }
 
 //=====[Implementations of private functions]===================================

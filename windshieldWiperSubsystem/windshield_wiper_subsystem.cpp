@@ -1,6 +1,7 @@
+/*
 #include "mbed.h"
 #include "arm_book_lib.h"
-#include "windsheild_wiper_subsystem.h"
+#include "windshield_wiper_subsystem.h"
 
 
 
@@ -81,6 +82,7 @@ static void updateWiperMode(int wiperModeValue) {
     currentWiperMode = OFF;
   }
 }
+*/
 
 
 
