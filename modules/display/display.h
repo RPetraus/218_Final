@@ -1,22 +1,20 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _SMART_CAR_SYSTEM_H_
-#define _SMART_CAR_SYSTEM_H_
-
-#define TIME_INCREMENT_MS 10
+#ifndef _DISPLAY_H_
+#define _DISPLAY_H_
 
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
 
-//=====[Declaration and initialization of public global variables]=============
-
-
 //=====[Declarations (prototypes) of public functions]=========================
 
-void smartCarSystemInit();
-void smartCarSystemUpdate();
+void displayInit( void );
+ 
+void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY );
+
+void displayStringWrite( const char * str );
 
 //=====[#include guards - end]=================================================
 
-#endif // _SMART_CAR_SYSTEM_H_
+#endif // _DISPLAY_H_

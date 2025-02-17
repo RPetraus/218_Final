@@ -1,7 +1,9 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _IGNITION_SUBSYSTEM_H_
-#define _IGNITION_SUBSYSTEM_H_
+#ifndef _SMART_CAR_SYSTEM_H_
+#define _SMART_CAR_SYSTEM_H_
+
+#define TIME_INCREMENT_MS 1000/////
 
 //=====[Declaration of public defines]=========================================
 
@@ -12,10 +14,9 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void ignitionSubsystemInit();
-bool ignitionSubsystemUpdate();
-bool engineRunning();
+void smartCarSystemInit();
+void smartCarSystemUpdate();
 
 //=====[#include guards - end]=================================================
 
-#endif // _IGNITION_SUBSYSTEM_H_
+#endif // _SMART_CAR_SYSTEM_H_

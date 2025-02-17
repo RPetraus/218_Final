@@ -5,6 +5,7 @@
 
 #include "ignition_subsystem.h"
 #include "smart_car_system.h"
+#include "user_display.h"
 
 //=====[Defines]===============================================================
 
@@ -20,13 +21,15 @@
 
 void smartCarSystemInit()
 {
-    ignitionSubsystemInit();
+    //ignitionSubsystemInit();
     // windshieldWiperSubsystemInit();
+    userDisplayInit();
 }
 
 
 void smartCarSystemUpdate()
 {
-    ignitionSubsystemUpdate();
+    //ignitionSubsystemUpdate();
+    userDisplayUpdate();
     delay(TIME_INCREMENT_MS);
 }

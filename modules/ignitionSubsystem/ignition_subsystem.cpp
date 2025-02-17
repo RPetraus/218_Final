@@ -39,7 +39,7 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 int accumulatedButtonTime = 0;
 
-bool engineStarted = false;
+bool engineRunning = false;
 bool driverWelcomed = false;
 
 debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
@@ -68,34 +68,29 @@ bool ignitionSubsystemUpdate()
 {
     welcomeMessage();
     ignitionEnable();
-    if (!engineStarted && debounceIgnition()){
+    if (!engineRunning && debounceIgnition()){
         uartUsb.write("Ignition attempted.\r\n", 21);
         if (!greenLED){
             sirenPin = BUZZER_ON;
             errorMessage();
-            engineStarted = false;
+            engineRunning = false;
         }
         else{
             sirenPin = BUZZER_OFF;
             greenLED = OFF;
             blueLED = ON;
             uartUsb.write("Engine started.\r\n", 17);
-            engineStarted = true;
+            engineRunning = true;
         }
     }
-    else if (engineStarted && debounceIgnition()){
+    else if (engineRunning && debounceIgnition()){
         uartUsb.write("Engine off.\r\n", 13);
-        engineStarted = false;
+        engineRunning = false;
         blueLED = OFF;
     }
     
-    return engineStarted;
+    return engineRunning;
 }
-
-bool engineRunning() {
-    return (engineStarted && !debounceIgnition());
-}
-
 //=====[Implementations of private functions]===================================
 
 static void inputsInit()
