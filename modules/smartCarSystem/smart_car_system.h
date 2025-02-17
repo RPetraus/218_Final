@@ -3,7 +3,7 @@
 #ifndef _SMART_CAR_SYSTEM_H_
 #define _SMART_CAR_SYSTEM_H_
 
-#define TIME_INCREMENT_MS 1000/////
+#define TIME_INCREMENT_MS 10
 
 //=====[Declaration of public defines]=========================================
 

@@ -43,6 +43,7 @@ float wiperModeReading = 0.0;
 
 
 //=====[Declarations (prototypes) of private functions]========================
+
 static void wiperUpdateMode();
 
 //=====[Implementations of public functions]===================================
@@ -52,7 +53,7 @@ void userDisplayInit()
     displayInit();
     engineRunning = true;///////////////////asdglkhsakdfrik
     displayCharPositionWrite ( 0,0 );
-    displayStringWrite( "Wiper Mode: OFF" );
+    displayStringWrite( "Wiper Mode:" );
 }
 
 void userDisplayUpdate()
@@ -63,13 +64,13 @@ void userDisplayUpdate()
 
         accumulatedDisplayTime = 0;
 
+        wiperUpdateMode();
+
         if (engineRunning) {
-            static WiperMode_t lastWiperMode = WIPER_OFF;  // Track the last wiper mode
-            if (currentWiperMode != lastWiperMode) {  // Only update the display if the mode changed
-                displayCharPositionWrite(0, 13); // Set the position to overwrite the previous string
+                displayCharPositionWrite(11, 0); // Set the position to overwrite the previous string
                 switch (currentWiperMode) {
                     case WIPER_HI:
-                        displayStringWrite("HI "); // if issue persists just clear and redisplay all text
+                        displayStringWrite("HI ");
                         break;
 
                     case WIPER_LO:
@@ -84,11 +85,7 @@ void userDisplayUpdate()
                         displayStringWrite("OFF");
                         break;
                 }
-                lastWiperMode = currentWiperMode;  // Update the last wiper mode
             }
-            wiperUpdateMode(); // Update the wiper mode based on the potentiometer reading
-        }
-
     } else {
         accumulatedDisplayTime = accumulatedDisplayTime + TIME_INCREMENT_MS;
     } 
