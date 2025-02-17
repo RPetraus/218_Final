@@ -92,6 +92,10 @@ bool ignitionSubsystemUpdate()
     return engineStarted;
 }
 
+bool engineRunning() {
+    return (engineStarted && !debounceIgnition(););
+}
+
 //=====[Implementations of private functions]===================================
 
 static void inputsInit()

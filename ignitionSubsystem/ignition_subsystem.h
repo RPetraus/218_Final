@@ -14,6 +14,7 @@
 
 void ignitionSubsystemInit();
 bool ignitionSubsystemUpdate();
+bool engineRunning();
 
 //=====[#include guards - end]=================================================
 
