@@ -15,6 +15,12 @@ typedef enum {
    WIPER_OFF
 } WiperMode_t;
 
+typedef enum {
+    INT_SHORT,
+    INT_MED,
+    INT_LONG
+} IntDelayTime_t;
+
 
 //=====[Declarations (prototypes) of public functions]=========================
 
@@ -23,6 +29,8 @@ typedef enum {
 void windshieldWiperInit();
 void windshieldWiperModeUpdate();
 WiperMode_t windshieldWiperMode();
+IntDelayTime_t intDelayType();
+void windshieldWiperStop();
 
 
 //=====[#include guards - end]=================================================

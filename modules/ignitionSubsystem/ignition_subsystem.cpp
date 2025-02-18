@@ -5,6 +5,7 @@
 
 #include "ignition_subsystem.h"
 #include "smart_car_system.h"
+#include "windshield_wiper_subsystem.h"
 
 
 //=====[Declaration of private defines]========================================
@@ -90,6 +91,9 @@ bool ignitionSubsystemUpdate()
     }
     else if (engineRunning && debounceIgnition()){
         uartUsb.write("Engine off.\r\n", 13);
+
+        windshieldWiperStop();
+
         engineRunning = false;
         blueLED = OFF;
     }

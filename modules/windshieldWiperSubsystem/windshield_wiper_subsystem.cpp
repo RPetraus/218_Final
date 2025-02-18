@@ -13,10 +13,13 @@
 #define POTENTIOMETER_MIN_WIPER_HI_LEVEL     0.75
 #define POTENTIOMETER_MIN_WIPER_LO_LEVEL     0.50
 #define POTENTIOMETER_MIN_WIPER_INT_LEVEL    0.25
+#define WIPER_HI_DELAY_MS 28
+#define WIPER_LO_DELAY_MS 37
+#define WIPER_INT_DELAY 0
 #define DUTY_MIN 0.04
 #define DUTY_MAX 0.0735
 #define PERIOD 0.02
-#define TIME_INCREMENT_MS 1
+#define MOTOR_UPDATE_TIME_MS 20
 
 //=====[Declaration of private data types]=====================================
 
@@ -30,11 +33,20 @@ PwmOut servo(PF_9);
 //=====[Declaration and initialization of public global variables]=============
 WiperMode_t currentWiperMode = WIPER_OFF;
 
+IntDelayTime_t currentIntDelay = INT_SHORT;
+
 float wiperModeReading = 0.0;
 
 //=====[Declaration and initialization of private global variables]============
 
 static bool wiperMinToMax = true;
+
+typedef enum {
+   WIPER_MIN_TO_MAX,
+   WIPER_MAX_TO_MIN
+} WiperDirection_t;
+
+WiperDirection_t currentWiperDirection = WIPER_MIN_TO_MAX;
 
 //=====[Declarations (prototypes) of private functions]=========================
 static void stopWipers();
@@ -43,7 +55,7 @@ static void wiperReadUpdateMode();
 static void windshieldWiperRunWipers();
 
 
-static void rotateWiper();
+static void rotateWiper(float wiperDelay);
 
 
 //=====[Implementations of public functions]===================================
@@ -56,13 +68,18 @@ void windshieldWiperInit() {
 
 void windshieldWiperModeUpdate() {
     if ( engineRunning ) { //and user has picked windshield wiper mode
-        wiperReadUpdateMode();
         windshieldWiperRunWipers();
+        wiperReadUpdateMode();
+        
     }
 }
 
 WiperMode_t windshieldWiperMode() {
     return currentWiperMode;
+}
+
+IntDelayTime_t intDelayType() {
+    return currentIntDelay;
 }
 /*
 void handleWiperControl(int wiperModeValue, int delayTimeValue) {
@@ -104,6 +121,7 @@ static void wiperReadUpdateMode() {
     } else {
         currentWiperMode = WIPER_OFF;
     }
+    userDisplayUpdate();
 }
 
 
@@ -114,34 +132,58 @@ static void windshieldWiperRunWipers() {
 
     float dutyCycle = DUTY_MIN;
     if (currentWiperMode == WIPER_HI) {
-        servo.write(DUTY_MAX);
-        //rotateWiper();
+        rotateWiper(WIPER_HI_DELAY_MS);
     } else if (currentWiperMode == WIPER_LO) {
-        //dutyCycle = DUTY_MIN + (DUTY_MAX - DUTY_MIN) * 0.5;
-        servo.write(DUTY_MIN);
+        rotateWiper(WIPER_LO_DELAY_MS);
     } else if (currentWiperMode == WIPER_INT) {
         servo.write(DUTY_MIN);
     } else if (currentWiperMode == WIPER_OFF) {
         servo.write(DUTY_MIN);
         return;
     }
-
-    if (increasing) {
-        currentAngle += 1.0;
-        if (currentAngle >= 67.0) {
-            currentAngle = 0.0;
-            increasing = true;
-        }
-    }
-
-    //dutyCycle = DUTY_MIN + (DUTY_MAX - DUTY_MIN) * (currentAngle / 67.0); ????
-    //servo.write(dutyCycle);
 }
 
 
-static void rotateWiper() {
+static void rotateWiper(float wiperDelay) {
     static int accumulatedWiperTime = 0;
+    accumulatedWiperTime = accumulatedWiperTime + 10;
+    if (accumulatedWiperTime >= MOTOR_UPDATE_TIME_MS) {
+        accumulatedWiperTime = 0;
 
+        switch ( currentWiperDirection ) {
+            case WIPER_MIN_TO_MAX:
+                for (int i = 0; i < 10; i++){
+                    servo.write(DUTY_MIN + ((DUTY_MAX - DUTY_MIN) / 10) * i);
+                    delay(wiperDelay);
+                }
+
+                currentWiperDirection = WIPER_MAX_TO_MIN;
+                break;
+
+            case WIPER_MAX_TO_MIN:
+                for (int i = 0; i < 10; i++){
+                    servo.write(DUTY_MAX - ((DUTY_MAX - DUTY_MIN) / 10) * i);
+                    delay(wiperDelay);
+                }
+
+                currentWiperDirection = WIPER_MIN_TO_MAX;
+                break;
+
+        }
+
+    }
+}
+
+void windshieldWiperStop() {
+    currentWiperMode = WIPER_OFF;
+    
+    
+    // MAYBE CAN CALL A FUNCTION TO DO THIS
+    userDisplayUpdate(); //USERDISPLAYUPDATE
+    servo.write(DUTY_MIN);
+}
+
+/*
     if (wiperMinToMax) {
         for (int i = 0; i < 100; i++){
             servo.write(DUTY_MIN + ((DUTY_MAX - DUTY_MIN) / 100) * i);
@@ -159,7 +201,7 @@ static void rotateWiper() {
     }
     accumulatedWiperTime = 0;
 }
-
+*/
 /*
 static void windshieldWiperMove() {
     switch ( windshieldWiperMode() ) {
@@ -191,29 +233,5 @@ static void windshieldWiperMove() {
             break;
     }
 
-}
-*/
-
-
-
-
-
-/*
-#include "mbed.h"
-#include "arm_book_lib.h"
-#define DUTY_MIN 0.03  //Duty cycle is pulse_width/period
-#define DUTY_MAX 0.1175
-#define PERIOD 0.02 //Units of period is seconds
-#define FULLY_STOP_DUTY 0.075
-PwmOut servo(PF_9);  //Here is where we declare the object
-int main() {
-   servo.period(PERIOD);
-   servo.write(DUTY_MIN);
-   while (true) {
-       servo.write(DUTY_MIN);
-       delay(3000);
-       servo.write(DUTY_MAX);
-       delay(3000);
-   }
 }
 */

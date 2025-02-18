@@ -35,46 +35,52 @@ void userDisplayInit()
     displayInit();
     engineRunning = true;///////////////////asdglkhsakdfrik get rid of this when integrating the ignition back
     displayCharPositionWrite ( 0,0 );
-    displayStringWrite( "Wiper Mode:" );
+    displayStringWrite( "Wiper Mode:OFF" );
+    displayCharPositionWrite ( 0,1 );
+    displayStringWrite( "                 ");
 }
 
 void userDisplayUpdate()
 {
-    static int accumulatedDisplayTime = 0;
-    
-    if (accumulatedDisplayTime >= DISPLAY_REFRESH_TIME_MS) {
+    if (engineRunning) {
+        displayCharPositionWrite(11, 0);
+        switch ( windshieldWiperMode() ) {
+            case WIPER_HI:
+                displayStringWrite("HI ");
+                displayCharPositionWrite( 0,1 );
+                displayStringWrite("                 ");
+                break;
 
-        accumulatedDisplayTime = 0;
+            case WIPER_LO:
+                displayStringWrite("LO ");
+                displayCharPositionWrite( 0,1 );
+                displayStringWrite("                 ");
+                break;
 
-        //wiperUpdateMode();
+            case WIPER_INT: 
+                displayStringWrite("INT");
+                displayCharPositionWrite( 0,1 );
+                displayStringWrite("Delay Type:");
+                displayCharPositionWrite( 11,1 );
+                switch ( intDelayType() ) {
+                    case INT_SHORT:
+                        displayStringWrite("SHORT");
+                    
+                    case INT_MED:
+                        displayStringWrite("MED  ");
 
-        if (engineRunning) {
-                displayCharPositionWrite(11, 0);
-                switch ( windshieldWiperMode() ) {
-                    case WIPER_HI:
-                        displayStringWrite("HI ");
-                        break;
-
-                    case WIPER_LO:
-                        displayStringWrite("LO ");
-                        break;
-
-                    case WIPER_INT: 
-                        displayStringWrite("INT");
-                        break;
-
-                    case WIPER_OFF:
-                        displayStringWrite("OFF");
-                        break;
+                    case INT_LONG:
+                        displayStringWrite("LONG ");
                 }
-            }
-    } else {
-        accumulatedDisplayTime = accumulatedDisplayTime + TIME_INCREMENT_MS;
-    } 
+                break;
+
+            case WIPER_OFF:
+                displayStringWrite("OFF");
+                displayCharPositionWrite( 0,1 );
+                displayStringWrite("                 ");
+                break;
+        }
+    }
 }
 
 //=====[Implementations of private functions]==================================
-
-
-
-
