@@ -9,9 +9,6 @@
 
 //=====[Declaration of public data types]======================================
 
-//=====[Declaration and initialization of public global variables]=============
-
-
 //=====[Declarations (prototypes) of public functions]=========================
 
 void smartCarSystemInit();

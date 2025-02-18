@@ -6,13 +6,14 @@
 #include "ignition_subsystem.h"
 #include "smart_car_system.h"
 
-//=====[Defines]===============================================================
+
+//=====[Declaration of private defines]========================================
 
 #define BUZZER_ON 0
 #define BUZZER_OFF 1
 #define TIME_DEBOUNCE_MS 30
 
-//=====[Declaration of public data types]======================================
+//=====[Declaration of private data types]=====================================
 
 typedef enum{
     BUTTON_UP,
@@ -35,6 +36,8 @@ DigitalOut sirenPin(PE_10);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
+//=====[Declaration of external public global variables]=======================
+
 //=====[Declaration and initialization of public global variables]=============
 
 int accumulatedButtonTime = 0;
@@ -43,6 +46,8 @@ bool engineRunning = false;
 bool driverWelcomed = false;
 
 debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
+
+//=====[Declaration and initialization of private global variables]============
 
 //=====[Declarations (prototypes) of private functions]=========================
 
@@ -182,6 +187,8 @@ static bool debounceIgnition()
     return ignitionReleased;
 }
 
+
+//move to pc_serial_com module
 static void errorMessage()
 {
 

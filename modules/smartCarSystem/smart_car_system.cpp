@@ -6,23 +6,29 @@
 #include "ignition_subsystem.h"
 #include "smart_car_system.h"
 #include "user_display.h"
+#include "windshield_wiper_subsystem.h"
 
-//=====[Defines]===============================================================
 
-//=====[Declaration of public data types]======================================
+//=====[Declaration of private defines]========================================
+
+//=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
 
+//=====[Declaration of external public global variables]=======================
+
 //=====[Declaration and initialization of public global variables]=============
 
-//=====[Declarations (prototypes) of public functions]=========================
+//=====[Declaration and initialization of private global variables]============
+
+//=====[Declarations (prototypes) of private functions]========================
 
 //=====[Implementations of public functions]===================================
 
 void smartCarSystemInit()
 {
     //ignitionSubsystemInit();
-    // windshieldWiperSubsystemInit();
+    windshieldWiperInit();
     userDisplayInit();
 }
 
@@ -30,6 +36,9 @@ void smartCarSystemInit()
 void smartCarSystemUpdate()
 {
     //ignitionSubsystemUpdate();
+    windshieldWiperModeUpdate();
     userDisplayUpdate();
     delay(TIME_INCREMENT_MS);
 }
+
+//=====[Implementations of private functions]==================================

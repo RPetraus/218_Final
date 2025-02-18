@@ -7,8 +7,6 @@
 
 //=====[Declaration of public data types]======================================
 
-//=====[Declaration and initialization of public global variables]=============
-
 extern bool engineRunning;
 
 //=====[Declarations (prototypes) of public functions]=========================
