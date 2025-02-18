@@ -88,8 +88,7 @@ bool ignitionSubsystemUpdate()
             uartUsb.write("Engine started.\r\n", 17);
             engineRunning = true;
         }
-    }
-    else if (engineRunning && debounceIgnition()){
+    } else if (engineRunning && debounceIgnition()){
         uartUsb.write("Engine off.\r\n", 13);
 
         windshieldWiperStop();

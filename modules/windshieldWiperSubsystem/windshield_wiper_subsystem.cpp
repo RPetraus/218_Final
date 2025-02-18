@@ -56,7 +56,6 @@ typedef enum {
 WiperDirection_t currentWiperDirection = WIPER_MIN_TO_MAX;
 
 //=====[Declarations (prototypes) of private functions]=========================
-static void stopWipers();
 static void runIntermittentWipers();
 static void wiperReadUpdateMode();
 static void windshieldWiperRunWipers();
@@ -65,6 +64,7 @@ static void intTypeReadUpdateMode();
 
 static void rotateWiper(float wiperDelay);
 static void intDelayWiper();
+static void intDelayDisplayUpdateWiper(int delayTime, int iterations);
 
 
 //=====[Implementations of public functions]===================================
@@ -80,6 +80,8 @@ void windshieldWiperUpdate() {
         windshieldWiperRunWipers();
         wiperReadUpdateMode();
         intTypeReadUpdateMode();
+    } else if (!engineRunning) {
+        servo.write(DUTY_MIN);
     }
 }
 
@@ -90,7 +92,7 @@ WiperMode_t windshieldWiperMode() {
 IntDelayTime_t intDelayType() {
     return currentIntDelay;
 }
-
+// SEPARATE PRIVATE AND PUBLIC FUNCS
 static void wiperReadUpdateMode() {
    wiperModeReading = wiperMode.read();
 
@@ -121,7 +123,6 @@ static void intTypeReadUpdateMode() {
     }
 }
 
-
 static void windshieldWiperRunWipers() {
     static float currentAngle = 0.0;
     static bool increasing = true;
@@ -135,63 +136,37 @@ static void windshieldWiperRunWipers() {
     } else if (currentWiperMode == WIPER_INT) {
         rotateWiper(WIPER_LO_DELAY_MS);
     } else if (currentWiperMode == WIPER_OFF) {
-        servo.write(DUTY_MIN);
+        servo.write(DUTY_MIN); // MOVES RLLY FAST LIKE FASTER THAN HI
         return;
     }
 }
 
 static void intDelayWiper() {
-    if (currentIntDelay == INT_LONG) {
-        for (int i = 0; i < 25; i++) {
-            delay(WIPER_INT_LONG_DELAY_MS / 25);
-            wiperReadUpdateMode();
-            intTypeReadUpdateMode();
-            userDisplayUpdate();
-        }
-    } else if (currentIntDelay == INT_MED) {
-        for (int i = 0; i < 25; i++) {
-            delay(WIPER_INT_MED_DELAY_MS / 25);
-            wiperReadUpdateMode();
-            intTypeReadUpdateMode();
-            userDisplayUpdate();
-        }
-    } else if (currentIntDelay == INT_SHORT) {
-        for (int i = 0; i < 10; i++) {
-            delay(WIPER_INT_SHORT_DELAY_MS / 10);
-            wiperReadUpdateMode();
-            intTypeReadUpdateMode();
-            userDisplayUpdate();
-        }
-    }
-}
-
-/*
-static void intDelayWiper() {
     switch ( currentIntDelay ) {
         case INT_LONG:
-            intDelayDisplayUpdateWiper(WIPER_INT_LONG_DELAY_MS);
+            intDelayDisplayUpdateWiper(WIPER_INT_LONG_DELAY_MS, 25);
             break;
         
         case INT_MED:
-            intDelayDisplayUpdateWiper(WIPER_INT_MED_DELAY_MS);
+            intDelayDisplayUpdateWiper(WIPER_INT_MED_DELAY_MS, 25);
             break;
 
         case INT_SHORT:
-            intDelayDisplayUpdateWiper(WIPER_INT_SHORT_DELAY_MS);
+            intDelayDisplayUpdateWiper(WIPER_INT_SHORT_DELAY_MS, 10);
             break;
     }
 
 }
 
-static void intDelayDisplayUpdateWiper(int delayTime) {
-    for (int i = 0; i < 100; i++) {
-        delay(delayTime / 100);
+static void intDelayDisplayUpdateWiper(int delayTime, int iterations) {
+    for (int i = 0; i < iterations; i++) {
+        delay(delayTime / iterations);
         wiperReadUpdateMode();
         intTypeReadUpdateMode();
         userDisplayUpdate();
     }
 }
-*/
+
 
 static void rotateWiper(float wiperDelay) {
     static int accumulatedWiperTime = 0;
@@ -204,6 +179,7 @@ static void rotateWiper(float wiperDelay) {
                 for (int i = 0; i < 10; i++) {
                     servo.write(DUTY_MIN + ((DUTY_MAX - DUTY_MIN) / 10) * i);
                     delay(wiperDelay);
+                    ignitionSubsystemUpdate();
                 }
 
                 currentWiperDirection = WIPER_MAX_TO_MIN;
@@ -213,6 +189,7 @@ static void rotateWiper(float wiperDelay) {
                 for (int i = 0; i < 10; i++){
                     servo.write(DUTY_MAX - ((DUTY_MAX - DUTY_MIN) / 10) * i);
                     delay(wiperDelay);
+                    ignitionSubsystemUpdate();
                 }
                 if (currentWiperMode == WIPER_INT) {
                     intDelayWiper();
@@ -228,9 +205,5 @@ static void rotateWiper(float wiperDelay) {
 
 void windshieldWiperStop() {
     currentWiperMode = WIPER_OFF;
-    
-    
-    // MAYBE CAN CALL A FUNCTION TO DO THIS
-    userDisplayUpdate(); //USERDISPLAYUPDATE
-    servo.write(DUTY_MIN);
+    userDisplayUpdate();
 }
