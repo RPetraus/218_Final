@@ -27,7 +27,7 @@ typedef enum {
 //void ignitionSubsystemInit();
 //bool ignitionSubsystemUpdate();
 void windshieldWiperInit();
-void windshieldWiperModeUpdate();
+void windshieldWiperUpdate();
 WiperMode_t windshieldWiperMode();
 IntDelayTime_t intDelayType();
 void windshieldWiperStop();

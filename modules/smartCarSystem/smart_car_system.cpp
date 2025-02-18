@@ -35,7 +35,7 @@ void smartCarSystemInit()
 void smartCarSystemUpdate()
 {
     ignitionSubsystemUpdate();
-    windshieldWiperModeUpdate();
+    windshieldWiperUpdate();
     delay(TIME_INCREMENT_MS);
 }
 

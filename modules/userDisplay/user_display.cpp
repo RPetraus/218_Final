@@ -33,7 +33,6 @@
 void userDisplayInit()
 {
     displayInit();
-    engineRunning = true;///////////////////asdglkhsakdfrik get rid of this when integrating the ignition back
     displayCharPositionWrite ( 0,0 );
     displayStringWrite( "Wiper Mode:OFF" );
     displayCharPositionWrite ( 0,1 );
@@ -65,12 +64,13 @@ void userDisplayUpdate()
                 switch ( intDelayType() ) {
                     case INT_SHORT:
                         displayStringWrite("SHORT");
-                    
+                        break;
                     case INT_MED:
                         displayStringWrite("MED  ");
-
+                        break;
                     case INT_LONG:
                         displayStringWrite("LONG ");
+                        break;
                 }
                 break;
 
