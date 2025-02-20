@@ -155,7 +155,7 @@ static void windshieldWiperRunWipers() {
         rotateWiper(WIPER_LO_DELAY_MS);
     } else if (currentWiperMode == WIPER_OFF) {
         windshieldWiperStop();
-        servo.write(DUTY_MIN); // MOVES RLLY FAST LIKE FASTER THAN HI
+        servo.write(DUTY_MIN); 
         return;
     }
 }
@@ -193,7 +193,7 @@ static void intDelayDisplayUpdateWiper(int delayTime, int iterations) {
 //Rotates the wiper based on the position of the servo motor and duty cycle
 static void rotateWiper(float wiperDelay) {
     static int accumulatedWiperTime = 0;
-    accumulatedWiperTime = accumulatedWiperTime + 10; // how long is actually taking before we're counting up to MOTOR_UPDATE_TIME_MS. should only be 20 ms
+    accumulatedWiperTime = accumulatedWiperTime + 10;
     if (accumulatedWiperTime >= MOTOR_UPDATE_TIME_MS) {
         accumulatedWiperTime = 0;
 
@@ -201,9 +201,7 @@ static void rotateWiper(float wiperDelay) {
             case WIPER_MIN_TO_MAX:
                 for (int i = 0; i < 10; i++) {
                     servo.write(DUTY_MIN + ((DUTY_MAX - DUTY_MIN) / 10) * i);
-                   // pcSerialComStringWrite("Start.\r\n");
                     delay(wiperDelay);
-                    //pcSerialComStringWrite("end.\r\n");
                     ignitionSubsystemUpdate();
                 }
 
@@ -213,13 +211,10 @@ static void rotateWiper(float wiperDelay) {
             case WIPER_MAX_TO_MIN:
                 for (int i = 0; i < 10; i++){
                     servo.write(DUTY_MAX - ((DUTY_MAX - DUTY_MIN) / 10) * i);
-                    //pcSerialComStringWrite("start 2\r\n");
                     delay(wiperDelay);
-                    //pcSerialComStringWrite("wnd 2.\r\n");
                     ignitionSubsystemUpdate();
                 }
                 if (currentWiperMode == WIPER_INT) {
-                    //pcSerialComStringWrite("Start.\r\n");
                     intDelayWiper();
                 }
 
