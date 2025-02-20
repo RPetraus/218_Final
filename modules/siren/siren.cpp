@@ -1,12 +1,11 @@
 //=====[Libraries]=============================================================
 
-#include "arm_book_lib.h"
 #include "mbed.h"
+#include "arm_book_lib.h"
 
-#include "ignition_subsystem.h"
+#include "siren.h"
+
 #include "smart_car_system.h"
-#include "windshield_wiper_subsystem.h"
-
 
 //=====[Declaration of private defines]========================================
 
@@ -14,34 +13,58 @@
 
 //=====[Declaration and initialization of public global objects]===============
 
+DigitalOut sirenPin(PE_10);
+
 //=====[Declaration of external public global variables]=======================
 
 //=====[Declaration and initialization of public global variables]=============
 
 //=====[Declaration and initialization of private global variables]============
 
+static bool sirenState = OFF;
+
 //=====[Declarations (prototypes) of private functions]========================
 
 //=====[Implementations of public functions]===================================
 
 /**
-* Initializes the smart car system by initializing the subsystems
+* Initializes the siren to not output
 */
-void smartCarSystemInit()
+void sirenInit()
 {
-    ignitionSubsystemInit();
-    windshieldWiperInit();
+    sirenPin = ON;
+}
+ 
+
+/**
+* Reads the current state of the siren
+* Returns the current state of the siren
+*/
+bool sirenStateRead()
+{
+    return sirenState;
 }
 
 
 /**
-* Updates the smart car system by updating its subsystems
+* Sets the state of the siren 
+* Parameter: The desired state of the siren
 */
-void smartCarSystemUpdate()
+void sirenStateWrite( bool state )
 {
-    ignitionSubsystemUpdate();
-    windshieldWiperUpdate();
-    delay(TIME_INCREMENT_MS);
+    sirenState = state;
+}
+
+/**
+* Updates the siren's output based on its state.
+*/
+void sirenUpdate() {
+    if ( sirenState == ON ) {
+        sirenPin = ON;
+    } else {
+        sirenPin = OFF;
+    }
 }
 
 //=====[Implementations of private functions]==================================
+

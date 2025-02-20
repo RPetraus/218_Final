@@ -11,10 +11,10 @@
 
 //=====[Declaration of private defines]========================================
 
-#define DISPLAY_REFRESH_TIME_MS 1000
+#define DISPLAY_REFRESH_TIME_MS              1000
 #define POTENTIOMETER_MIN_WIPER_HI_LEVEL     0.75
 #define POTENTIOMETER_MIN_WIPER_LO_LEVEL     0.50
-#define POTENTIOMETER_MIN_WIPER_INT_LEVEL     0.25
+#define POTENTIOMETER_MIN_WIPER_INT_LEVEL    0.25
 
 //=====[Declaration of private data types]=====================================
 
@@ -30,6 +30,9 @@
 
 //=====[Implementations of public functions]===================================
 
+/**
+* Initializes the user display
+*/
 void userDisplayInit()
 {
     displayInit();
@@ -39,6 +42,10 @@ void userDisplayInit()
     displayStringWrite( "                 ");
 }
 
+
+/**
+* Updates the user display based on the current windshield wiper mode
+*/
 void userDisplayUpdate()
 {
     if (engineRunning) {

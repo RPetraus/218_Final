@@ -1,11 +1,8 @@
 //=====[Libraries]=============================================================
 
-#include "arm_book_lib.h"
 #include "mbed.h"
-
-#include "ignition_subsystem.h"
-#include "smart_car_system.h"
-#include "windshield_wiper_subsystem.h"
+#include "arm_book_lib.h"
+#include "pc_serial_com.h"
 
 
 //=====[Declaration of private defines]========================================
@@ -13,6 +10,8 @@
 //=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
+
+UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration of external public global variables]=======================
 
@@ -23,25 +22,18 @@
 //=====[Declarations (prototypes) of private functions]========================
 
 //=====[Implementations of public functions]===================================
-
 /**
-* Initializes the smart car system by initializing the subsystems
+* Initializes serial communication 
 */
-void smartCarSystemInit()
+void pcSerialComInit()
 {
-    ignitionSubsystemInit();
-    windshieldWiperInit();
 }
 
-
 /**
-* Updates the smart car system by updating its subsystems
+* Sends a string over the serial interface.
+* Parameter: The string to be written to the interface
 */
-void smartCarSystemUpdate()
+void pcSerialComStringWrite( const char* str )
 {
-    ignitionSubsystemUpdate();
-    windshieldWiperUpdate();
-    delay(TIME_INCREMENT_MS);
+    uartUsb.write( str, strlen(str) );
 }
-
-//=====[Implementations of private functions]==================================

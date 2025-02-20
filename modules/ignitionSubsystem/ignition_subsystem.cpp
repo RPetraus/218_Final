@@ -6,21 +6,21 @@
 #include "ignition_subsystem.h"
 #include "smart_car_system.h"
 #include "windshield_wiper_subsystem.h"
+#include "siren.h"
+#include "pc_serial_com.h"
 
 
 //=====[Declaration of private defines]========================================
 
-#define BUZZER_ON 0
-#define BUZZER_OFF 1
 #define TIME_DEBOUNCE_MS 30
 
 //=====[Declaration of private data types]=====================================
 
 typedef enum{
-    BUTTON_UP,
-    BUTTON_FALLING,
-    BUTTON_DOWN,
-    BUTTON_RISING
+    BUTTON_UP,       //ignition button is not pressed
+    BUTTON_FALLING,  //ignition button is being pressed down
+    BUTTON_DOWN,     //ignition button is pressed 
+    BUTTON_RISING    //ignition button is being released
 } debouncedIgnitionReleasedStateMachine_t;
 
 //=====[Declaration and initialization of public global objects]===============
@@ -33,9 +33,6 @@ DigitalIn ignitionButton(BUTTON1);
 
 DigitalOut greenLED(LED1);
 DigitalOut blueLED(LED2);
-DigitalOut sirenPin(PE_10);
-
-UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration of external public global variables]=======================
 
@@ -45,8 +42,11 @@ int accumulatedButtonTime = 0;
 
 bool engineRunning = false;
 bool driverWelcomed = false;
+bool displayErrors = false;
+bool ignitionAttempted = false;
 
 debouncedIgnitionReleasedStateMachine_t ignitionButtonState;
+debouncedIgnitionReleasedStateMachine_t ignitionButtonLastState;
 
 //=====[Declaration and initialization of private global variables]============
 
@@ -62,7 +62,9 @@ static bool debounceIgnition();
 static void errorMessage();
 
 //=====[Implementations of public functions]===================================
-
+/**
+* Initializes the ignition subsystem, including inputs, outputs, and debounce.
+*/
 void ignitionSubsystemInit()
 {
     inputsInit();
@@ -70,26 +72,34 @@ void ignitionSubsystemInit()
     debounceIgnitionInit();
 }
 
+
+/**
+* Updates the ignition subsystem. Handls ignition button state and the status of engine.
+* Returns true if engine is running, false otherwise.
+*/
 bool ignitionSubsystemUpdate()
 {
     welcomeMessage();
     ignitionEnable();
-    if (!engineRunning && debounceIgnition()){
-        uartUsb.write("Ignition attempted.\r\n", 21);
+     
+    if (!engineRunning && debounceIgnition() && ignitionAttempted){
+        pcSerialComStringWrite("Ignition attempted.\r\n");
         if (!greenLED){
-            sirenPin = BUZZER_ON;
+            sirenStateWrite( OFF );
+            sirenUpdate();
             errorMessage();
             engineRunning = false;
         }
         else{
-            sirenPin = BUZZER_OFF;
+            sirenStateWrite( ON );
+            sirenUpdate();
             greenLED = OFF;
             blueLED = ON;
-            uartUsb.write("Engine started.\r\n", 17);
+            pcSerialComStringWrite("Engine started.\r\n");
             engineRunning = true;
         }
     } else if (engineRunning && debounceIgnition()){
-        uartUsb.write("Engine off.\r\n", 13);
+        pcSerialComStringWrite("Engine off.\r\n");
 
         windshieldWiperStop();
 
@@ -99,23 +109,28 @@ bool ignitionSubsystemUpdate()
     
     return engineRunning;
 }
+
+ 
 //=====[Implementations of private functions]===================================
 
+//Initializes input pins
 static void inputsInit()
 {
     driverPresent.mode(PullDown);
     passengerPresent.mode(PullDown);
     driverSeatbelt.mode(PullDown);
     passengerSeatbelt.mode(PullDown);
+    sirenInit();
 }
 
+//Initializes output pins
 static void outputsInitIgnition()
 {
     greenLED = OFF;
     blueLED = OFF;
-    sirenPin = BUZZER_OFF;
 }
 
+//Initializes the ignition button state for debouncing purposes
 static void debounceIgnitionInit()
 {
     if( ignitionButton ) {
@@ -125,10 +140,11 @@ static void debounceIgnitionInit()
     }
 }
 
+//Displays a welcome message when the driver is seated
 static void welcomeMessage()
 {
     if (driverPresent && !driverWelcomed){
-        uartUsb.write("Welcome to enhanced alarm system model 218-W25\r\n", 48);
+        pcSerialComStringWrite("Welcome to enhanced alarm system model 218-W25\r\n");
         driverWelcomed = true;
     }
     else if (!driverPresent){
@@ -136,6 +152,7 @@ static void welcomeMessage()
     }
 }
 
+//Enables ignition LED based on seat and seatbelt status
 static void ignitionEnable()
 {
     if (driverPresent && driverSeatbelt && passengerPresent && passengerSeatbelt){
@@ -146,6 +163,7 @@ static void ignitionEnable()
     }
 }
 
+//Debounces the ignition button (avoids false triggers). Returns true if ignition button released
 static bool debounceIgnition()
 {
     bool ignitionReleased = false;
@@ -162,8 +180,9 @@ static bool debounceIgnition()
             if( accumulatedButtonTime >= TIME_DEBOUNCE_MS ) {
                 if( ignitionButton ) {
                     ignitionButtonState = BUTTON_DOWN;
+                    ignitionAttempted = true;
                 } else {
-                ignitionButtonState = BUTTON_UP;
+                    ignitionButtonState = BUTTON_UP;
                 }
             }
             accumulatedButtonTime = accumulatedButtonTime + TIME_INCREMENT_MS;
@@ -191,22 +210,23 @@ static bool debounceIgnition()
 }
 
 
-//move to pc_serial_com module
+//Displays error messages if ignition is inhibited
 static void errorMessage()
 {
 
-    uartUsb.write("Ignition Inhibited\r\n", 20);
+    pcSerialComStringWrite("Ignition Inhibited\r\n");
     
     if(!driverPresent){
-        uartUsb.write("Driver seat not occupied.\r\n", 27);
+        pcSerialComStringWrite("Driver seat not occupied.\r\n");
     } 
     if(!driverSeatbelt){
-        uartUsb.write("Driver seatbelt not fastened.\r\n", 31);
+        pcSerialComStringWrite("Driver seatbelt not fastened.\r\n");
     }
     if(!passengerPresent){
-        uartUsb.write("Passenger seat not occupied.\r\n", 30);
+        pcSerialComStringWrite("Passenger seat not occupied.\r\n");
     }
     if(!passengerSeatbelt){
-        uartUsb.write("Passenger seatbelt not fastened.\r\n", 34);
+        pcSerialComStringWrite("Passenger seatbelt not fastened.\r\n");
     }
+    displayErrors = true;
 }

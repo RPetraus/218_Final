@@ -1,52 +1,64 @@
 # Automatic Headlight Control System  
 
-Ryan Petrauskas and Leo Weisberger  
+Ryan Petrauskas and Livy Bottomley
 
-The Automatic Headlight Control System in Project 2 enhances driving safety by automating headlight activation based on external conditions. It integrates a driver seat occupancy sensor, an ignition push button, a blue indicator LED on the NUCLEO board, a potentiometer for headlight mode selection, a light sensor, and two LEDs representing the low beam lamps. The ignition system ensures the engine can only start when the driver and passenger are seated and buckled. Once started, the engine remains on even if the driver exits. Pressing the ignition button again while the engine is running turns it off. Headlights operate in three modes controlled by the potentiometer: OFF when below 0.33, ON when above 0.66, and AUTO between 0.33 and 0.66. In AUTO mode, headlights turn on after one second in darkness and off after two seconds in brightness, maintaining their state otherwise.  
+The Windshield Wiper Control System in Project 3 enhances driving convenience and safety by creating windshield wiper functions in various driving conditions. The system ensures that the engine is only started when both the driver and passenger seats are occupied, and both seatbelts are fastened. The wipers can operate in four modes: high-speed, low-speed, intermittent, and off. In the intermittent mode, the user can select from three different delay times: short, medium, or long. The wipers will only function if the engine is running, and they will stop when the engine is turned off. At high-speed, the servo moves at 40 rpm and 30 rpm at low-speed. If the engine or wipers are turned off, the wipers will move back to their original position.
+
+In this project, we chose to use a position servo motor to simulate the windshield wiper motor. The reason for this choice is that position servo motors allow precise control over the wiper's position. This is ideal for accurately simulating the movement of the wipers from one end of the windshield to the other. Additionally, position servos can hold a specific position until instructed to move again, which is an important trait for the movement of windshield wipers.
+
 
 # System Components  
 
-| Component                   | Description |
-|-----------------------------|-------------|
-| **Driver Seat Sensor**      | Push button |
-| **Passenger Seat Sensor**   | Push button |
-| **Driver Seatbelt Sensor**  | Toggleswitch |
-| **Ignition Button**         | Push Button on NUCLEO board |
-| **Indicator LEDs**          | Blue and Green LEDs on NUCLEO board |
-| **Headlight Mode Selector** | Potentiometer |
-| **Light Sensor**            | Light Dependent Resistor (LDR) |
-| **Headlights**              | Two LEDs |
+| Component                     | Description                                                         |
+|-------------------------------|---------------------------------------------------------------------|
+| **Driver Seat Sensor**        | Push button to detect if the driver seat is occupied                |
+| **Passenger Seat Sensor**     | Push button to detect if the passenger seat is occupied             |
+| **Driver Seatbelt Sensor**    | Toggle switch to check if the driver's seatbelt is fastened         |
+| **Passenger Seatbelt Sensor** | Toggle switch to check if the driver's seatbelt is fastened         |
+| **Ignition Button**           | Push Button on NUCLEO board to turn engine on or off                |
+| **Indicator LEDs**            | Blue LED to show engine on and Green LED to show ignition enabled   |
+| **Wiper Mode Selector**       | Potentiometer that selects wiper modes: HI, LO, INT, OFF            |
+| **Int Delay Selector**        | Potentiometer that selects delay time in int mode: SHORT, MED, LONG |
+| **LCD Display**               | Displays the current wiper mode and delay time chosen by user       |
+| **Windshield Wiper Motor**    | Positional Servo that simulates windshield wiper movement           |
+| **Siren**                     | Sounds when try to start the engine when system is not ready        |
+| **Windshield Wiper**          | Pencil                                                              |
 
-# Headlight Modes  
+# Wiper Modes  
 
-| Mode  | Potentiometer Range | Behavior |
-|-------|----------------------|----------|
-| **OFF**  | < 0.33  | Headlights remain off |
-| **AUTO** | 0.33 - 0.66 | Turns headlights on/off based on ambient light |
-| **ON**   | > 0.66  | Headlights remain on |
+| Mode    | Potentiometer Range | Behavior                                                  |
+|---------|---------------------|-----------------------------------------------------------|
+| **HI**  | >= 0.75             | Wipers move at high speed                                 |
+| **LO**  | 0.50 - 0.75         | Wipers move at low speed                                  |
+| **INT** | 0.25 - 0.50         | Wipers move at low speed, with given delay between sweeps |
+| **OFF** | < 0.25              | Wipers do not move and remain stationary                  |
 
-# Light Sensor Modes  
+# Intermittent Delay Time Modes  
 
-| Condition | Behavior |
-|-----------|----------|
-| **Dark (≤ 0.5)** | Turn headlights on after 1 second. |
-| **Transition (between 0.5 and 0.8)** | No change in headlight state. |
-| **Bright (> 0.8)** | Turn headlights off after a 2 seconds. |
+| Mode       | Potentiometer Range | Behavior                            |
+|------------|---------------------|-------------------------------------|
+| **LONG**   | >= 0.66             | 8-second delay between wiper sweeps |
+| **MEDIUM** | 0.66 - 0.33         | 6-second delay between wiper sweeps |
+| **SHORT**  | < 0.33              | 3-second delay between wiper sweeps |
 
 # Testing Results  
 
-| Subsystem           | Specification                                                                    | Results  | 
-|-------------------------|------------------------------------------------------------------------------|----------|
-| **Ignition System**     | Enable engine start when both seats are occupied and seatbelts fastened      |  Pass    |
-|                         | Display appropriate error messages when ignition is inhibited                |  Pass    |
-|                         | Keep the engine running even if seat belts are unfastened or occupants leave |  Pass    |
-|                         | Stop the engine when the ignition button is pressed and released             |  Pass    |
-| **Headlight System**    | ON mode turns both headlights on                                             |  Pass    |
-|                         | OFF mode turns both headlights off                                           |  Pass    |
-|                         | AUTO mode - Headlights turn off after 2s in daylight                         |  Pass    |
-|                         | AUTO mode - Headlights turn on after 1s in dusk                              |  Pass    |
-|                         | AUTO mode - Headlights maintain state in intermediate light                  |  Pass    |
-|                         | Headlights turn off when engine stops                                        |  Pass    |
+| Subsystem                   | Specification                                                                  | Results  | 
+|-----------------------------|--------------------------------------------------------------------------------|----------|
+| **Ignition System**         | Enable engine start when both seats are occupied and seatbelts fastened        |  Pass    |
+|                             | Welcome driver when seated                                                     |  Pass    |
+|                             | Display appropriate error messages when ignition is inhibited                  |  Pass    |
+|                             | Allows for multiple attempts to start engine                                   |  Pass    |
+|                             | Keep the engine running even if seat belts are unfastened or occupants leave   |  Pass    |
+|                             | Stop the engine when the ignition button is pressed and released               |  Pass    |
+| **Windshield Wiper System** | Wipers run in HI, LO, INT, or OFF when engine is running                       |  Pass    |
+|                             | In INT mode, delay time is correct based on chosen mode (SHORT, MED, LONG)     |  Pass    |
+|                             | Selected mode is displayed, including selection of delay time                  |  Pass    |
+|                             | Wipers turn off if engine turns off                                            |  Pass    |
+|                             | Wipers complete cycle and return to 0 degrees if engine is turned off          |  Pass    |
+|                             | Wipers complete cycle and return to 0 degrees if wipers are turned off         |  Pass    |
+|                             | Wipers remain stationary if engine is turned off while hesitating in INT mode  |  Pass    |
+|                             | Wipers remain stationary if wipers are turned off while hesitating in INT mode |  Pass    |
 
 
 
