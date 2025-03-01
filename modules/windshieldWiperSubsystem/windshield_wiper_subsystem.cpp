@@ -108,7 +108,6 @@ void windshieldWiperStop() {
 }
 
 //=====[Implementations of private functions]==================================
-// Updates the wiper mode based on potentiometer value
 static void wiperReadUpdateMode() {
    wiperModeReading = wiperMode.read();
 
@@ -126,7 +125,6 @@ static void wiperReadUpdateMode() {
     userDisplayUpdate();
 }
 
-//Updates the intermittent delay type based on the potentiometer value
 static void intTypeReadUpdateMode() {
    intModeReading = intMode.read();
 
@@ -140,7 +138,6 @@ static void intTypeReadUpdateMode() {
     }
 }
 
-//Runs the wipers according to the current wiper mode
 static void windshieldWiperRunWipers() {
     static float currentAngle = 0.0;
     static bool increasing = true;
@@ -160,7 +157,6 @@ static void windshieldWiperRunWipers() {
     }
 }
 
-//Applies the delay for intermittent wiper mode
 static void intDelayWiper() {
     switch ( currentIntDelay ) {
         case INT_LONG:
@@ -178,7 +174,6 @@ static void intDelayWiper() {
 
 }
 
-//Updates the display while waiting for int delay to pass
 static void intDelayDisplayUpdateWiper(int delayTime, int iterations) {
     for (int i = 0; i < iterations; i++) {
         delay(delayTime / iterations);
@@ -190,7 +185,6 @@ static void intDelayDisplayUpdateWiper(int delayTime, int iterations) {
 
 }
 
-//Rotates the wiper based on the position of the servo motor and duty cycle
 static void rotateWiper(float wiperDelay) {
     static int accumulatedWiperTime = 0;
     accumulatedWiperTime = accumulatedWiperTime + 10;
