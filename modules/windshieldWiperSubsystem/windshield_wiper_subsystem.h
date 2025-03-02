@@ -24,8 +24,6 @@ typedef enum {
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-//void ignitionSubsystemInit();
-//bool ignitionSubsystemUpdate();
 void windshieldWiperInit();
 void windshieldWiperUpdate();
 WiperMode_t windshieldWiperMode();
