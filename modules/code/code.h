@@ -1,19 +1,17 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _SMART_CAR_SYSTEM_H_
-#define _SMART_CAR_SYSTEM_H_
-
-#define TIME_INCREMENT_MS 10
+#ifndef _CODE_H_
+#define _CODE_H_
 
 //=====[Declaration of public defines]=========================================
+
 
 //=====[Declaration of public data types]======================================
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void smartCarSystemInit();
-void smartCarSystemUpdate();
+void resetCode();
 
 //=====[#include guards - end]=================================================
 
-#endif // _SMART_CAR_SYSTEM_H_
+#endif // _CODE_H_

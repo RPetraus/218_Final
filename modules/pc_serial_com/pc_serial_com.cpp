@@ -2,6 +2,7 @@
 
 #include "mbed.h"
 #include "arm_book_lib.h"
+
 #include "pc_serial_com.h"
 
 
@@ -36,4 +37,8 @@ void pcSerialComInit()
 void pcSerialComStringWrite( const char* str )
 {
     uartUsb.write( str, strlen(str) );
+}
+
+void pcSerialComCharRead( char *receivedChar ) {
+    uartUsb.read( receivedChar, 1 );
 }

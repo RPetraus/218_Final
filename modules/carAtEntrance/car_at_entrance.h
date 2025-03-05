@@ -1,19 +1,16 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _PC_SERIAL_COM_H_
-#define _PC_SERIAL_COM_H_
+#ifndef _CAR_AT_ENTRANCE_H_
+#define _CAR_AT_ENTRANCE_H_
 
 //=====[Declaration of public defines]=========================================
-
 
 //=====[Declaration of public data types]======================================
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void pcSerialComInit();
-void pcSerialComStringWrite( const char* str );
-void pcSerialComCharRead( char *receivedChar );
+bool carAtEntrance();
 
 //=====[#include guards - end]=================================================
 
-#endif // _PC_SERIAL_COM_H_
+#endif // _CAR_AT_ENTRANCE_H_

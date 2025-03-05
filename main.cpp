@@ -3,7 +3,7 @@
 #include "arm_book_lib.h"
 #include "mbed.h"
 
-#include "smart_car_system.h"
+#include "parking_system.h"
 
 //=====[Defines]===============================================================
 
@@ -17,9 +17,9 @@
 
 int main()
 {
-    smartCarSystemInit();
+    parkingSystemInit();
     while (true) {
-        smartCarSystemUpdate();
+        parkingSystemUpdate();
     }
 }
 

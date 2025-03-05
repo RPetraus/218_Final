@@ -1,19 +1,19 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _PC_SERIAL_COM_H_
-#define _PC_SERIAL_COM_H_
+#ifndef _PARKING_SYSTEM_H_
+#define _PARKING_SYSTEM_H_
+
+#define TIME_INCREMENT_MS 10
 
 //=====[Declaration of public defines]=========================================
-
 
 //=====[Declaration of public data types]======================================
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void pcSerialComInit();
-void pcSerialComStringWrite( const char* str );
-void pcSerialComCharRead( char *receivedChar );
+void parkingSystemInit();
+void parkingSystemUpdate();
 
 //=====[#include guards - end]=================================================
 
-#endif // _PC_SERIAL_COM_H_
+#endif // _PARKING_SYSTEM_H_

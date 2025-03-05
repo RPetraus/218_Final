@@ -1,19 +1,18 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _PC_SERIAL_COM_H_
-#define _PC_SERIAL_COM_H_
+#ifndef _MOVE_GATE_H_
+#define _MOVE_GATE_H_
 
 //=====[Declaration of public defines]=========================================
-
 
 //=====[Declaration of public data types]======================================
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void pcSerialComInit();
-void pcSerialComStringWrite( const char* str );
-void pcSerialComCharRead( char *receivedChar );
+void moveGateInit();
+void openGate();
+void closeGate();
 
 //=====[#include guards - end]=================================================
 
-#endif // _PC_SERIAL_COM_H_
+#endif // _MOVE_GATE_H_

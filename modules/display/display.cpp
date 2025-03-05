@@ -58,14 +58,14 @@
 
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalOut displayD0( D7 );
-DigitalOut displayD1( D6 );
-DigitalOut displayD2( D5 );
-DigitalOut displayD3( D4 );
-DigitalOut displayD4( D3 );
-DigitalOut displayD5( D2 );
-DigitalOut displayD6( D1 );
-DigitalOut displayD7( D0 );
+DigitalOut displayD0( D0 );
+DigitalOut displayD1( D1 );
+DigitalOut displayD2( D2 );
+DigitalOut displayD3( D3 );
+DigitalOut displayD4( D4 );
+DigitalOut displayD5( D5 );
+DigitalOut displayD6( D6 );
+DigitalOut displayD7( D7 );
 DigitalOut displayRs( D8 );
 DigitalOut displayEn( D9 );
 
