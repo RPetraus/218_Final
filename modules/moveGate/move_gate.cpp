@@ -1,11 +1,9 @@
 //=====[Libraries]=============================================================
 
-/*
 #include "mbed.h"
 #include "arm_book_lib.h"
 
 #include "move_gate.h"
-*/
 
 //=====[Declaration of private defines]========================================
 
@@ -20,9 +18,9 @@
 
 //=====[Declaration and initialization of public global objects]===============
 
-//DigitalOut greenLED(A1);
-//DigitalOut redLED(D11);
-//PwmOut servo(PG_0);
+DigitalOut greenLED(PE_14);
+DigitalOut redLED(PE_15);
+//PwmOut servo(PF_2);
 
 //=====[Declaration of external public global variables]=======================
 
@@ -34,15 +32,15 @@
 
 //=====[Implementations of public functions]===================================
 
-/*
+
 void moveGateInit() {
-    greenLED = OFF;
+    greenLED = ON;
     redLED = OFF;
-    servo.period(PERIOD);
-    servo.write(DUTY_MIN);
+    //servo.period(PERIOD);
+    //servo.write(DUTY_MIN);
 }
 
-
+/*
 void openGate() {
     redLED = ON;
     for (int i = 0; i < 10; i++) {

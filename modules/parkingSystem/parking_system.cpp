@@ -7,11 +7,10 @@
 
 
 
-
+#include "move_gate.h"
 
 
 #include "user_display.h"
-
 #include "sirens.h"
 #include "code.h"
 
@@ -34,6 +33,7 @@
 /**
 * Initializes the smart car system by initializing the subsystems
 */
+
 void parkingSystemInit()
 {
     sirensInit();
