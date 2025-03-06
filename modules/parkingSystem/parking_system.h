@@ -3,7 +3,7 @@
 #ifndef _PARKING_SYSTEM_H_
 #define _PARKING_SYSTEM_H_
 
-#define TIME_INCREMENT_MS 10
+#define TIME_INCREMENT_MS 50
 
 //=====[Declaration of public defines]=========================================
 

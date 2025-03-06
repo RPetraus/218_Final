@@ -5,6 +5,12 @@
 
 #include "mbed.h"
 
+//=====[Declaration of public defines]=========================================
+
+//=====[Declaration of public data types]======================================
+
+//=====[Declarations (prototypes) of public functions]=========================
+
 void carAtEntranceInit();
 void carAtEntranceUpdate();
 bool isCarDetected();

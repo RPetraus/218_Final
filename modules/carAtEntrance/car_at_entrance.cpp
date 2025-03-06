@@ -2,19 +2,23 @@
 #include "arm_book_lib.h"
 #include "pc_serial_com.h"  // Added this include for the serial communication functions
 
-// Light sensor configuration
-#define NIGHT_LEVEL 40   // Dusk level
-#define DAY_LEVEL 30     // Daylight level
-#define LIGHT_SENSOR_SAMPLES 10  // Number of samples to average
+//=====[Declaration of private defines]========================================
+#define NIGHT_LEVEL 26  
+#define DAY_LEVEL 16     
+#define LIGHT_SENSOR_SAMPLES 10 
 
 // Global variables
 bool Car_Detect = false;
+
+//=====[Declaration of private data types]=====================================
 float lightReadingsArray[LIGHT_SENSOR_SAMPLES];
 static int lightSampleIndex = 0;
 
-// Define the analog input for light sensor
+//=====[Declaration and initialization of public global objects]===============
 AnalogIn lightsens(A0);
 
+
+//=====[Implementations of public functions]===================================
 void carAtEntranceInit()
 {
     // Initialize light readings array to zero
@@ -44,18 +48,17 @@ bool sensorUpdate()
     }
     
     // Scale to 0-100 (higher number means darker)
-    float currentLightLevel = (1.0 - (lightReadingsSum / LIGHT_SENSOR_SAMPLES)) * 10000.0;
+    float currentLightLevel = (1.0 - (lightReadingsSum / LIGHT_SENSOR_SAMPLES)) * 100.0;
     
     // Debug: Print the current light level
     char buffer[50];
     sprintf(buffer, "Light level: %.2f\r\n", currentLightLevel);
-    pcSerialComStringWrite(buffer);  // Using the pc_serial_com module function
+    pcSerialComStringWrite(buffer);  
     
-    // Check if the light level indicates dusk or darker
     if (currentLightLevel >= NIGHT_LEVEL) {
-        Car_Detect = true;  // Set Car_Detect to true when it's dusk or darker
+        Car_Detect = true;  
     } else if (currentLightLevel < DAY_LEVEL) {
-        Car_Detect = false; // Reset when it's clearly daylight
+        Car_Detect = false; 
     }
     
     return Car_Detect;  // Return the state of Car_Detect
@@ -64,22 +67,17 @@ bool sensorUpdate()
 void carAtEntranceUpdate()
 {
     static bool previousDetectionState = false;
-    
-    // Update sensor and get detection status
     bool currentDetectionState = sensorUpdate();
-    
-    // Only print when the state changes to avoid flooding the serial output
     if (currentDetectionState != previousDetectionState) {
         if (currentDetectionState) {
-            pcSerialComStringWrite("Car Detected\r\n");  // Using the pc_serial_com module function
+            pcSerialComStringWrite("Car Detected\r\n");
         } else {
-            pcSerialComStringWrite("No Car Detected\r\n");  // Using the pc_serial_com module function
+            pcSerialComStringWrite("No Car Detected\r\n");  
         }
         
         previousDetectionState = currentDetectionState;
     }
 }
-
 bool isCarDetected()
 {
     return Car_Detect;

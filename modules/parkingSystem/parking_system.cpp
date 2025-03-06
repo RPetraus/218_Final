@@ -50,7 +50,7 @@ void parkingSystemInit()
 */
 void parkingSystemUpdate()
 {
-    
+    carAtEntranceUpdate();
     
     delay(TIME_INCREMENT_MS);
 }
