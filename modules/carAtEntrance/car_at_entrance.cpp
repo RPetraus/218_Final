@@ -1,17 +1,32 @@
-/*
-#include "mbed.h"
+#include "car_at_entrance.h"
 #include "arm_book_lib.h"
-#define NIGHT_LEVEL 40   // Car Detected
-#define DAY_LEVEL 30     // No Car Detected
+#include "pc_serial_com.h"  // Added this include for the serial communication functions
+
+// Light sensor configuration
+#define NIGHT_LEVEL 40   // Dusk level
+#define DAY_LEVEL 30     // Daylight level
 #define LIGHT_SENSOR_SAMPLES 10  // Number of samples to average
-bool Car_Detect = false;           
-float lightReadingsArray[LIGHT_SENSOR_SAMPLES];  // Array to store light readings
-static int lightSampleIndex = 0;                 // Index for current sample
 
+// Global variables
+bool Car_Detect = false;
+float lightReadingsArray[LIGHT_SENSOR_SAMPLES];
+static int lightSampleIndex = 0;
 
-AnalogIn lightsens(A0);   
+// Define the analog input for light sensor
+AnalogIn lightsens(A0);
 
-bool carAtEntrance() 
+void carAtEntranceInit()
+{
+    // Initialize light readings array to zero
+    for (int i = 0; i < LIGHT_SENSOR_SAMPLES; i++) {
+        lightReadingsArray[i] = 0.0;
+    }
+    
+    // Send initialization message using the pc_serial_com module function
+    pcSerialComStringWrite("Car Detection System Initialized\r\n");
+}
+
+bool sensorUpdate() 
 {
     // Add new reading to array
     lightReadingsArray[lightSampleIndex] = lightsens.read();
@@ -29,13 +44,12 @@ bool carAtEntrance()
     }
     
     // Scale to 0-100 (higher number means darker)
-    float currentLightLevel = (1.0 - (lightReadingsSum / LIGHT_SENSOR_SAMPLES)) * 100;
-
+    float currentLightLevel = (1.0 - (lightReadingsSum / LIGHT_SENSOR_SAMPLES)) * 10000.0;
+    
     // Debug: Print the current light level
     char buffer[50];
     sprintf(buffer, "Light level: %.2f\r\n", currentLightLevel);
-    uartUsb.write(buffer, strlen(buffer));
-
+    pcSerialComStringWrite(buffer);  // Using the pc_serial_com module function
     
     // Check if the light level indicates dusk or darker
     if (currentLightLevel >= NIGHT_LEVEL) {
@@ -47,38 +61,26 @@ bool carAtEntrance()
     return Car_Detect;  // Return the state of Car_Detect
 }
 
-void testLDR()
+void carAtEntranceUpdate()
 {
+    static bool previousDetectionState = false;
     
-    // Initialize light readings array to zero
-    for (int i = 0; i < LIGHT_SENSOR_SAMPLES; i++) {
-        lightReadingsArray[i] = 0.0;
-    }
+    // Update sensor and get detection status
+    bool currentDetectionState = sensorUpdate();
     
-    uartUsb.write("Car Detection System Initialized\r\n", 36);
-    
-    // Add initialization delay to stabilize readings
-    ThisThread::sleep_for(1000ms);
-    
-    bool previousDetectionState = false;
-    
-    while (true) {
-        // Update sensor and get detection status
-        bool currentDetectionState = sensorUpdate();
-        
-        // Only print when the state changes to avoid flooding the serial output
-        if (currentDetectionState != previousDetectionState) {
-            if (currentDetectionState) {
-                uartUsb.write("Car Detected\r\n", 14);
-            } else {
-                uartUsb.write("No Car Detected\r\n", 17);
-            }
-            
-            previousDetectionState = currentDetectionState;
+    // Only print when the state changes to avoid flooding the serial output
+    if (currentDetectionState != previousDetectionState) {
+        if (currentDetectionState) {
+            pcSerialComStringWrite("Car Detected\r\n");  // Using the pc_serial_com module function
+        } else {
+            pcSerialComStringWrite("No Car Detected\r\n");  // Using the pc_serial_com module function
         }
         
-        // Longer delay to reduce sampling frequency
-        ThisThread::sleep_for(500ms);
+        previousDetectionState = currentDetectionState;
     }
 }
-*/
+
+bool isCarDetected()
+{
+    return Car_Detect;
+}

@@ -1,16 +1,12 @@
 //=====[#include guards - begin]===============================================
+//=====[#include guards - begin]===============================================
+#ifndef CAR_AT_ENTRANCE_H
+#define CAR_AT_ENTRANCE_H
 
-#ifndef _CAR_AT_ENTRANCE_H_
-#define _CAR_AT_ENTRANCE_H_
+#include "mbed.h"
 
-//=====[Declaration of public defines]=========================================
+void carAtEntranceInit();
+void carAtEntranceUpdate();
+bool isCarDetected();
 
-//=====[Declaration of public data types]======================================
-
-//=====[Declarations (prototypes) of public functions]=========================
-
-bool carAtEntrance();
-
-//=====[#include guards - end]=================================================
-
-#endif // _CAR_AT_ENTRANCE_H_
+#endif // CAR_AT_ENTRANCE_H

@@ -5,7 +5,7 @@
 #include "parking_system.h"
 
 
-
+#include "car_at_entrance.h"
 
 #include "move_gate.h"
 
@@ -39,8 +39,9 @@ void parkingSystemInit()
     sirensInit();
 
     userDisplayInit();
+    
+    carAtEntranceInit();
 
-    resetCode();
 }
 
 
