@@ -1,8 +1,10 @@
 #include "car_at_entrance.h"
 #include "arm_book_lib.h"
+
 #include "pc_serial_com.h"  // Added this include for the serial communication functions
 
 //=====[Declaration of private defines]========================================
+
 #define NIGHT_LEVEL 26  
 #define DAY_LEVEL 17     
 #define LIGHT_SENSOR_SAMPLES 10 
@@ -11,14 +13,20 @@
 bool Car_Detect = false;
 
 //=====[Declaration of private data types]=====================================
+
 float lightReadingsArray[LIGHT_SENSOR_SAMPLES];
 static int lightSampleIndex = 0;
 
 //=====[Declaration and initialization of public global objects]===============
+
 AnalogIn lightsens(A0);
 
+//=====[Declarations (prototypes) of private functions]========================
+
+static bool sensorUpdate();
 
 //=====[Implementations of public functions]===================================
+
 void carAtEntranceInit()
 {
     // Initialize light readings array to zero
@@ -30,7 +38,28 @@ void carAtEntranceInit()
     pcSerialComStringWrite("Car Detection System Initialized\r\n");
 }
 
-bool sensorUpdate() 
+void carAtEntranceUpdate()
+{
+    static bool previousDetectionState = false;
+    bool currentDetectionState = sensorUpdate();
+    if (currentDetectionState != previousDetectionState) {
+        if (currentDetectionState) {
+            pcSerialComStringWrite("Car Detected\r\n");
+        } else {
+            pcSerialComStringWrite("No Car Detected\r\n");  
+        }
+        
+        previousDetectionState = currentDetectionState;
+    }
+}
+bool carIsDetected()
+{
+    return Car_Detect;
+}
+
+//=====[Implementations of public functions]===================================
+
+static bool sensorUpdate() 
 {
     // Add new reading to array
     lightReadingsArray[lightSampleIndex] = lightsens.read();
@@ -62,23 +91,4 @@ bool sensorUpdate()
     }
     
     return Car_Detect;  // Return the state of Car_Detect
-}
-
-void carAtEntranceUpdate()
-{
-    static bool previousDetectionState = false;
-    bool currentDetectionState = sensorUpdate();
-    if (currentDetectionState != previousDetectionState) {
-        if (currentDetectionState) {
-            pcSerialComStringWrite("Car Detected\r\n");
-        } else {
-            pcSerialComStringWrite("No Car Detected\r\n");  
-        }
-        
-        previousDetectionState = currentDetectionState;
-    }
-}
-bool isCarDetected()
-{
-    return Car_Detect;
 }

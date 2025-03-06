@@ -5,21 +5,16 @@
 
 #include "move_gate.h"
 
-#include "motor.h"
+//#include "motor.h"
 
 //=====[Declaration of private defines]========================================
-
-#define GATE_MOVE_DELAY_MS                   50
-#define DUTY_MIN                             0.04
-#define DUTY_MAX                             0.0735
-#define PERIOD                               0.02
 
 //=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalOut greenLED(PE_14);
-DigitalOut redLED(PE_15);
+DigitalOut greenLED(D10);
+DigitalOut redLED(D11);
 
 //=====[Declaration of external public global variables]=======================
 
@@ -34,8 +29,16 @@ DigitalOut redLED(PE_15);
 
 void moveGateInit() {
     greenLED = OFF;
-    redLED = ON;
-    
+    redLED = OFF;
+    //motorInit();
+}
+
+void openGate() {
+
+}
+
+void closeGate() {
+
 }
 
 /*

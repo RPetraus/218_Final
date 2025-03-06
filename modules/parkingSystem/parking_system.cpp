@@ -5,15 +5,15 @@
 #include "parking_system.h"
 
 
-#include "car_at_entrance.h"
+
 
 #include "move_gate.h"
-#include "exit_subsystem.h"
 
 
 #include "user_display.h"
 #include "sirens.h"
 #include "code.h"
+#include "car_at_entrance.h"
 
 //=====[Declaration of private defines]========================================
 
@@ -40,12 +40,12 @@ void parkingSystemInit()
     sirensInit();
 
     userDisplayInit();
-    
-    carAtEntranceInit();
 
     moveGateInit();
 
-    //exitButtonInit();
+    carAtEntranceInit();
+
+    resetCode();
 
 }
 
@@ -55,11 +55,9 @@ void parkingSystemInit()
 */
 void parkingSystemUpdate()
 {
-    carAtEntranceUpdate();
-
-   // exitButtonUpdate();
+    carAtEntranceUpdate();   
     
-    delay(TIME_INCREMENT_MS);
+    delay(SYSTEM_TIME_INCREMENT_MS);
 }
 
 //=====[Implementations of private functions]==================================

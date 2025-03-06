@@ -1,9 +1,7 @@
 //=====[#include guards - begin]===============================================
-//=====[#include guards - begin]===============================================
-#ifndef CAR_AT_ENTRANCE_H
-#define CAR_AT_ENTRANCE_H
 
-#include "mbed.h"
+#ifndef _MATRIX_KEYPAD_H_
+#define _MATRIX_KEYPAD_H_
 
 //=====[Declaration of public defines]=========================================
 
@@ -11,8 +9,9 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
-void carAtEntranceInit();
-void carAtEntranceUpdate();
-bool carIsDetected();
+void matrixKeypadInit( int updateTime_ms );
+char matrixKeypadUpdate();
 
-#endif // CAR_AT_ENTRANCE_H
+//=====[#include guards - end]=================================================
+
+#endif // _MATRIX_KEYPAD_H_

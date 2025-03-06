@@ -1,26 +1,42 @@
-/*
-#include "exit_subsystem.h"
-#include "move_gate.h"  // For openGate and closeGate functions
-#include "car_at_entrance.h"  // For the Car_Detect status via isCarDetected()
-#include "pc_serial_com.h"  // For debug messages
-#include "arm_book_lib.h"
+//=====[Libraries]=============================================================
+
 #include "mbed.h"
+#include "arm_book_lib.h"
 
+#include "exit_subsystem.h"
 
-DigitalIn exitButtonPin(PG_1);  // Adjust pin as needed for your hardware
+#include "move_gate.h"
+#include "car_at_entrance.h"
+#include "pc_serial_com.h"
 
-// State variables
+//=====[Declaration of private defines]========================================
+
+//=====[Declaration of private data types]=====================================
+
+//=====[Declaration and initialization of public global objects]===============
+
+DigitalIn exitButtonPin(PG_1);
+
+//=====[Declaration of external public global variables]=======================
+
+//=====[Declaration and initialization of public global variables]=============
+
+//=====[Declaration and initialization of private global variables]============
+
 static bool gateIsOpen = false;
 static bool previousButtonState = false;
 
-void exitButtonInit()
+//=====[Declarations (prototypes) of private functions]=========================
+
+//=====[Implementations of public functions]===================================
+
+void exitSubsystemInit()
 {
-    // Initialize the exit button module
     gateIsOpen = false;
     pcSerialComStringWrite("Exit Button System Initialized\r\n");
 }
 
-void exitButtonUpdate()
+void exitSubsysemUpdate()
 {
     // Read current button state (assuming active low button - pressed when LOW)
     bool currentButtonState = !exitButtonPin.read();
@@ -36,7 +52,7 @@ void exitButtonUpdate()
     }
     
     // If gate is open and car has left (Car_Detect is false), close the gate
-    if (gateIsOpen && !isCarDetected()) {
+    if (gateIsOpen && !carIsDetected()) {
         pcSerialComStringWrite("Car has exited - Closing Gate\r\n");
         closeGate();
         gateIsOpen = false;
@@ -45,4 +61,5 @@ void exitButtonUpdate()
     // Update previous button state
     previousButtonState = currentButtonState;
 }
-*/
+
+//=====[Implementations of private functions]==================================
