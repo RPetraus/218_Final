@@ -1,10 +1,3 @@
-//=====[Libraries]=============================================================
-
-#include "mbed.h"
-#include "arm_book_lib.h"
-
-#include "move_gate.h"
-
 #include "motor.h"
 
 //=====[Declaration of private defines]========================================
@@ -14,22 +7,11 @@
 #define DUTY_MAX                             0.0735
 #define PERIOD                               0.02
 
-//=====[Declaration of private data types]=====================================
 
-//=====[Declaration and initialization of public global objects]===============
 
-DigitalOut greenLED(PE_14);
-DigitalOut redLED(PE_15);
-
-//=====[Declaration of external public global variables]=======================
-
-//=====[Declaration and initialization of public global variables]=============
-
-//=====[Declaration and initialization of private global variables]============
-
-//=====[Declarations (prototypes) of private functions]=========================
-
-//=====[Implementations of public functions]===================================
+PwmOut servo(PF_2);
+//servo.period(PERIOD);
+//servo.write(DUTY_MIN);
 
 
 void moveGateInit() {

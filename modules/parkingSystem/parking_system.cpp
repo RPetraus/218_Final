@@ -8,6 +8,7 @@
 #include "car_at_entrance.h"
 
 #include "move_gate.h"
+#include "exit_subsystem.h"
 
 
 #include "user_display.h"
@@ -44,6 +45,8 @@ void parkingSystemInit()
 
     moveGateInit();
 
+    //exitButtonInit();
+
 }
 
 
@@ -53,6 +56,8 @@ void parkingSystemInit()
 void parkingSystemUpdate()
 {
     carAtEntranceUpdate();
+
+   // exitButtonUpdate();
     
     delay(TIME_INCREMENT_MS);
 }
