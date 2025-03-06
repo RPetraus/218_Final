@@ -42,6 +42,8 @@ void parkingSystemInit()
     
     carAtEntranceInit();
 
+    moveGateInit();
+
 }
 
 

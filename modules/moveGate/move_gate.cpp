@@ -34,8 +34,8 @@ DigitalOut redLED(PE_15);
 
 
 void moveGateInit() {
-    greenLED = ON;
-    redLED = OFF;
+    greenLED = OFF;
+    redLED = ON;
     //servo.period(PERIOD);
     //servo.write(DUTY_MIN);
 }
